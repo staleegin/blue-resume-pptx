@@ -1,0 +1,20 @@
+{
+  "name": "blue-resume-pptx",
+  "version": "1.0.0",
+  "description": "单页 A4 简历 PPT 生成器：JSON 数据 → 可编辑 .pptx（蓝色顶栏 + 左栏经历 + 右栏卡片版式），附 Claude 技能",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "node skill/blue-resume-pptx/scripts/build_resume.js",
+    "example": "node skill/blue-resume-pptx/scripts/build_resume.js examples/zh_campus.json examples/zh_campus.pptx"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "pptxgenjs": "^4.0.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-icons": "^5.7.0",
+    "sharp": "^0.35.4"
+  },
+  "engines": { "node": ">=18" }
+}

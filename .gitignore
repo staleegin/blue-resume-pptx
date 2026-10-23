@@ -1,0 +1,5 @@
+node_modules/
+*.pdf
+.DS_Store
+# 个人简历数据和照片不要提交
+private/
