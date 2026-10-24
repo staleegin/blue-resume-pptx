@@ -44,8 +44,6 @@
 | Claude | ✅ 可用 | JS 版（作为技能） |
 | ChatGPT 网页版（免费版） | ✅ 可用：运行脚本并给出 .pptx 下载 | Python 版；环境为 Python 3.13、python-pptx 1.0.2、Pillow 12.3 |
 | 豆包 | ✅ 可用：运行脚本并给出 .pptx 下载 | JS 版 |
-
-各平台的实测提示词、截图和过程记录见 [tests/platform_runs/](tests/platform_runs/)：[ChatGPT](tests/platform_runs/chatgpt.md) · [豆包](tests/platform_runs/doubao.md)。
 | 只能聊天、不能运行代码的 AI | ⚠️ 只能输出 data.json，需要自己在电脑上运行脚本 | 任一版本 |
 
 判断 AI 是否真的运行了脚本：看它是否贴出了脚本打印的那一行 JSON（含 `level`、`bottom`、`overflowPt`），以及 PPT 文件属性和文本框名称（「姓名」「列表_…」「核心数据卡片」等）是否来自脚本。
@@ -64,6 +62,40 @@
 ```
 
 只能聊天、不能运行代码的 AI（比如 DeepSeek 网页版）也能用：让它只输出 `data.json`，你再在自己电脑上运行 `python resume_pptx.py data.json 简历.pptx`。
+
+### 实测记录（2026-10-24）
+
+**ChatGPT**：上传仓库压缩包，发送下面这段提示词。
+
+```text
+我上传了简历 PPT 技能的压缩包。请：
+1. 解压后阅读 SKILL.md 和 resume_pptx.py 开头的使用说明；
+2. 按 SKILL.md 里的填写模板，自己编一份虚构的中文简历（数据全部虚构，邮箱用 example.com），不用问我；
+3. 整理成 data.json，运行：python resume_pptx.py data.json 简历.pptx；
+4. 把 简历.pptx 给我下载，并贴出脚本实际打印的那一行 JSON。
+
+必须真实运行这个脚本，不要自己另画版式；运行失败就贴出报错，不要编造结果。
+```
+
+- 思考 1 分 8 秒，运行了 Python 版脚本，虚构了一份中文运营岗简历，给出 简历.pptx 下载。
+- 贴出了脚本打印的 JSON：`{"out": "简历.pptx", "level": 0, "fontSize": 9, "lineHeight": 15.1, "bottom": 661, "pageBottom": 813.85, "overflowPt": 0, "movedToRight": []}`，能确认真的运行了脚本。
+- 还附了自检表：约 38 KB、1 页、A4 纵向，并转成 PDF 检查了预览图。
+
+**豆包**：上传仓库压缩包，发送「学习这个 skill，再用 skill 里的简历模板生成一个简历」。
+
+- 1 分 30 秒后，用仓库示例数据 `examples/zh_campus.json`（王小明 · 前端校招）生成了 .pptx，并列出定制简历需要提供的必填项和选填项。
+- 再发「转成 pdf 发我吧」，9 秒后给出同名 PDF。
+- 没有贴出脚本打印的 JSON，只看回复无法确认是否真的运行了脚本，需要打开 PPT 检查文本框名称。
+
+结论：提示词里要求「贴出脚本打印的 JSON」「失败就贴报错」，最容易确认 AI 真的运行了脚本。
+
+<details><summary>截图</summary>
+
+| ChatGPT | 豆包 |
+|---|---|
+| ![ChatGPT 实测](tests/platform_runs/chatgpt.png) | ![豆包实测](tests/platform_runs/doubao.png) |
+
+</details>
 
 ## 快速开始（本地）
 
