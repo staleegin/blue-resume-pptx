@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "build": "node skill/blue-resume-pptx/scripts/build_resume.js",
-    "example": "node skill/blue-resume-pptx/scripts/build_resume.js examples/zh_campus.json examples/zh_campus.pptx"
+    "example": "node skill/blue-resume-pptx/scripts/build_resume.js examples/zh_campus.json examples/zh_campus.pptx",
+    "test": "node tests/bold.test.js"
   },
   "dependencies": {
     "jszip": "^3.10.1",
@@ -16,5 +17,7 @@
     "react-icons": "^5.7.0",
     "sharp": "^0.35.4"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }
