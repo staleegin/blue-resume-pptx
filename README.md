@@ -25,14 +25,49 @@
 - **中英文自动识别**：中文用黑体，英文用 Arial 并按单词换行。
 - **可换主色**：一个 `theme` 字段，卡片底色会自动跟着变浅。
 
-## 快速开始
+## 两个版本，任选其一
 
-需要 Node.js 18 或以上版本。
+| | Python 版 `resume_pptx.py` | JS 版 `build_resume.js` |
+|---|---|---|
+| 适合 | ChatGPT 等网页 AI、只装了 Python 的电脑 | Claude 技能、豆包等有 Node.js 的环境 |
+| 依赖 | python-pptx、Pillow（网页 AI 一般自带） | Node.js 18+，`npm install` |
+| 文件 | **单个文件**，数据格式和给 AI 的说明都写在文件开头 | `skill/blue-resume-pptx/scripts/` |
+
+两个版本用同一份 `data.json`，生成结果**逐个元素一致**（`tests/parity.py` 检查过 240 份英文简历和中文示例）。头像略有不同：Python 版用 PowerPoint 自带的圆形形状显示照片，在 PPT 里「更改图片」后仍然是圆形。
+
+## 在网页 AI 里用（ChatGPT、豆包等）
+
+1. 下载 [`resume_pptx.py`](resume_pptx.py)。
+2. 在 AI 对话里上传这个文件，再附上你的旧简历或零散信息（照片可选）。
+3. 粘贴下面这段话：
+
+```text
+我上传了 resume_pptx.py（简历 PPT 生成脚本）和我的简历材料。请：
+1. 先阅读 resume_pptx.py 开头的「给 AI 的使用说明」和 data.json 格式；
+2. 按说明整理我的信息，缺的先问我，不要编造任何经历和数字；
+3. 写好 data.json 后，在代码环境里运行：python resume_pptx.py data.json 简历.pptx
+4. 把生成的 .pptx 给我下载，并告诉我脚本输出的 level 和 overflowPt。
+注意：必须运行这个脚本生成，不要自己用 python-pptx 另画版式。
+```
+
+只能聊天、不能运行代码的 AI（比如 DeepSeek 网页版）也能用：让它只输出 `data.json`，你再在自己电脑上运行 `python resume_pptx.py data.json 简历.pptx`。
+
+## 快速开始（本地）
+
+Python 版：
+
+```bash
+pip install python-pptx Pillow
+python resume_pptx.py examples/zh_campus.json 简历.pptx
+```
+
+JS 版（需要 Node.js 18 或以上）：
 
 ```bash
 npm install
 npm run example                                  # 重新生成 examples/zh_campus.pptx
 npm run build -- 你的数据.json 输出文件名.pptx      # 用自己的数据生成
+npm test                                         # 自动加粗规则单测
 ```
 
 脚本会输出一行 JSON，说明生成结果：
@@ -53,7 +88,7 @@ soffice --headless --convert-to pdf 输出文件名.pptx
 
 ## 数据格式
 
-完整说明见 [skill/blue-resume-pptx/SKILL.md](skill/blue-resume-pptx/SKILL.md)，示例见 [examples/zh_campus.json](examples/zh_campus.json)。基本结构如下：
+完整说明见 [resume_pptx.py](resume_pptx.py) 开头或 [skill/blue-resume-pptx/SKILL.md](skill/blue-resume-pptx/SKILL.md)，示例见 [examples/zh_campus.json](examples/zh_campus.json)。基本结构如下：
 
 ```json
 {
@@ -93,4 +128,4 @@ soffice --headless --convert-to pdf 输出文件名.pptx
 
 ## 许可证
 
-MIT
+代码采用 MIT 许可证。联系方式图标来自 [Font Awesome Free](https://fontawesome.com)（通过 react-icons 渲染），按 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 授权使用。
