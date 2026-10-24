@@ -4,9 +4,18 @@
 
 为什么用 PPT 做简历：Word 里图片乱跑、表格错位，PPT 可以自由排版，导出 PDF 后和 Word 做的没有区别。
 
-![示例预览](examples/preview.png)
+| 中文示例 | 英文示例 |
+|---|---|
+| ![中文示例](examples/preview_zh_campus.png) | ![英文示例](examples/preview_en_marketing.png) |
 
-> 预览图是在 Linux 上用替代字体渲染的。在装有黑体和微软雅黑的 Windows 上打开，字体效果以 PowerPoint 实际显示为准。示例人物「王小明」是虚构的。
+每个示例都有三份文件：`.json`（输入数据）、`.pptx`（可编辑的 PPT）和同名 `.pdf`（导出效果，不用装 PowerPoint 也能直接看）。
+
+| 示例 | 数据 | PPT | PDF |
+|---|---|---|---|
+| 中文 · 前端校招 | [zh_campus.json](examples/zh_campus.json) | [zh_campus.pptx](examples/zh_campus.pptx) | [zh_campus.pdf](examples/zh_campus.pdf) |
+| 英文 · 市场营销 | [en_marketing.json](examples/en_marketing.json) | [en_marketing.pptx](examples/en_marketing.pptx) | [en_marketing.pdf](examples/en_marketing.pdf) |
+
+> 示例的 PDF 和预览图是在 Linux 上用 LibreOffice 导出的，中文字体用思源黑体（Noto Sans CJK）代替黑体。在 Windows 版 PowerPoint 里打开 .pptx，会显示为黑体和微软雅黑。示例人物都是虚构的。
 
 ## 特点
 
@@ -22,7 +31,7 @@
 
 ```bash
 npm install
-npm run example                                  # 生成 examples/zh_campus.pptx
+npm run example                                  # 重新生成 examples/zh_campus.pptx
 npm run build -- 你的数据.json 输出文件名.pptx      # 用自己的数据生成
 ```
 
@@ -36,7 +45,11 @@ npm run build -- 你的数据.json 输出文件名.pptx      # 用自己的数�
 - `overflowPt`：大于 0 表示仍然超出一页。
 - `movedToRight`：自动挪到右栏的板块。
 
-生成后在 PowerPoint 或 WPS 里打开，检查一遍，再「另存为 PDF」投递。
+生成后在 PowerPoint 或 WPS 里打开，检查一遍，再「另存为 PDF」投递，得到和 .pptx 对应的 PDF。如果装了 LibreOffice，也可以用命令行导出：
+
+```bash
+soffice --headless --convert-to pdf 输出文件名.pptx
+```
 
 ## 数据格式
 

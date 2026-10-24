@@ -1,0 +1,47 @@
+{
+  "name": "Alex Morgan",
+  "title": "Digital Marketing Specialist",
+  "contacts": [
+    { "type": "phone", "text": "+1 555-0100" },
+    { "type": "email", "text": "alex.morgan@example.com" },
+    { "type": "linkedin", "text": "linkedin.com/in/example" },
+    { "type": "location", "text": "Austin, TX" }
+  ],
+  "summary": "Marketing specialist with 4 years of experience in paid social, SEO and lifecycle email. Comfortable owning a budget, running experiments and reporting results to leadership.",
+  "left": [
+    { "title": "Experience", "entries": [
+      { "name": "Digital Marketing Specialist", "date": "2023.03 - Present", "sub": "Example Outdoor Co. | Austin, TX",
+        "bullets": [
+          "Managed a $40K monthly paid social budget across Meta and TikTok; cut cost per acquisition by 28%",
+          "Built a weekly A/B testing routine for landing pages, lifting conversion rate from 2.1% to 3.4%",
+          "Launched a 5-step onboarding email flow that **drove 18% of first-year revenue** from new customers"
+        ] },
+      { "name": "Marketing Coordinator", "date": "2021.06 - 2023.02", "sub": "Sample Coffee Roasters | Denver, CO",
+        "bullets": [
+          "Grew organic search traffic 3x in 12 months through a 40-article content plan",
+          "Coordinated 12 in-store events per year with local partners and tracked attendance and sales"
+        ] }
+    ]},
+    { "title": "Projects", "entries": [
+      { "name": "Holiday Gift Guide Campaign", "date": "2024.11",
+        "details": ["Channels: Meta Ads, Email, Instagram"],
+        "bullets": ["Planned and shipped the campaign in 3 weeks; generated $250K in sales at a 4.2x return on ad spend"] }
+    ]},
+    { "title": "Education", "entries": [
+      { "name": "University of Example", "date": "2017.09 - 2021.05", "sub": "B.A. in Communication",
+        "details": ["Honors: Dean's List, 6 semesters"] }
+    ]}
+  ],
+  "right": [
+    { "title": "Skills", "tags": ["Meta Ads", "Google Ads", "TikTok Ads", "SEO", "Email Automation", "A/B Testing", "Copywriting", "Budget Planning"] },
+    { "title": "Tools", "tags": ["GA4", "Looker Studio", "HubSpot", "Klaviyo", "Canva", "Excel"] },
+    { "title": "Certifications", "items": [
+      { "name": "Google Ads Search", "date": "2024", "content": "Google Skillshop" },
+      { "name": "HubSpot Inbound", "date": "2023", "content": "HubSpot Academy" }
+    ]},
+    { "title": "Languages", "items": [
+      { "name": "English", "content": "Native" },
+      { "name": "Spanish", "content": "Professional working" }
+    ]}
+  ]
+}
