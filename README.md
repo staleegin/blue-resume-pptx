@@ -89,13 +89,11 @@
 
 结论：提示词里要求「贴出脚本打印的 JSON」「失败就贴报错」，最容易确认 AI 真的运行了脚本。
 
-<details><summary>截图</summary>
+下面两张截图就是完整的使用过程，照着做即可：上传仓库压缩包，发提示词，等它生成 .pptx 给你下载。
 
 | ChatGPT | 豆包 |
 |---|---|
-| ![ChatGPT 实测](tests/platform_runs/chatgpt.png) | ![豆包实测](tests/platform_runs/doubao.png) |
-
-</details>
+| <img src="tests/platform_runs/chatgpt.png" alt="ChatGPT 使用截图" width="400"> | <img src="tests/platform_runs/doubao.png" alt="豆包使用截图" width="400"> |
 
 ## 快速开始（本地）
 
