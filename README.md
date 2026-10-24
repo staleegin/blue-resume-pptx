@@ -44,6 +44,8 @@
 | Claude | ✅ 可用 | JS 版（作为技能） |
 | ChatGPT 网页版（免费版） | ✅ 可用：运行脚本并给出 .pptx 下载 | Python 版；环境为 Python 3.13、python-pptx 1.0.2、Pillow 12.3 |
 | 豆包 | ✅ 可用：运行脚本并给出 .pptx 下载 | JS 版 |
+
+各平台的实测提示词、截图和过程记录见 [tests/platform_runs/](tests/platform_runs/)：[ChatGPT](tests/platform_runs/chatgpt.md) · [豆包](tests/platform_runs/doubao.md)。
 | 只能聊天、不能运行代码的 AI | ⚠️ 只能输出 data.json，需要自己在电脑上运行脚本 | 任一版本 |
 
 判断 AI 是否真的运行了脚本：看它是否贴出了脚本打印的那一行 JSON（含 `level`、`bottom`、`overflowPt`），以及 PPT 文件属性和文本框名称（「姓名」「列表_…」「核心数据卡片」等）是否来自脚本。
