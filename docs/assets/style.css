@@ -73,7 +73,7 @@ img { max-width: 100%; display: block; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .hero-actions .btn { min-height: 48px; padding: 10px 22px; font-size: 16px; }
 .hero-page { transform: rotate(1.2deg); transform-origin: 50% 0; }
-.hero-page img { width: 100%; aspect-ratio: 595.25 / 841.85; }
+.hero-page img { width: 100%; height: auto; aspect-ratio: 595.25 / 841.85; }
 
 .section { max-width: 1160px; margin: 0 auto; padding: 56px 24px; }
 .section h2 { font-size: 30px; line-height: 1.3; margin: 0 0 8px; }
@@ -82,7 +82,7 @@ img { max-width: 100%; display: block; }
 
 .examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
 .example figure { margin: 0; }
-.example .sheet { width: 100%; aspect-ratio: 595.25 / 841.85; }
+.example .sheet { width: 100%; height: auto; aspect-ratio: 595.25 / 841.85; }
 .example figcaption { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
 .example figcaption strong { margin-right: auto; }
 
