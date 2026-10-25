@@ -1,14 +1,14 @@
 # blue-resume-pptx
 
-把简历内容（一份 JSON）生成**单页 A4、可编辑的 PowerPoint 简历**。版式是蓝色顶栏，左栏放经历，右栏放技能卡片。仓库里同时附带一个 Claude 技能：把零散素材交给 Claude，它会先问清缺的信息，再写成 JSON，最后直接出 .pptx。
+把简历内容（一份 JSON）生成**单页 A4、可编辑的 PowerPoint 简历**。有两种版式：蓝色顶栏双栏（左栏放经历，右栏放技能卡片），和没有色块、不分栏的简洁单栏（加一行 `"layout": "simple"`）。仓库里同时附带一个 Claude 技能：把零散素材交给 Claude，它会先问清缺的信息，再写成 JSON，最后直接出 .pptx。
 
 **在线使用：<https://staleegin.github.io/blue-resume-pptx/>**：打开网页填写，右边实时预览，点一下就能下载 PPT。全部在浏览器里生成，数据不上传。
 
 为什么用 PPT 做简历：Word 里图片乱跑、表格错位，PPT 可以自由排版，导出 PDF 后和 Word 做的没有区别。
 
-| 中文示例 | 英文示例 |
-|---|---|
-| ![中文示例](examples/preview_zh_campus.png) | ![英文示例](examples/preview_en_marketing.png) |
+| 中文示例 | 英文示例 | 简洁单栏 |
+|---|---|---|
+| ![中文示例](examples/preview_zh_campus.png) | ![英文示例](examples/preview_en_marketing.png) | ![简洁单栏示例](examples/preview_zh_simple.png) |
 
 每个示例都有三份文件：`.json`（输入数据）、`.pptx`（可编辑的 PPT）和同名 `.pdf`（导出效果，不用装 PowerPoint 也能直接看）。
 
@@ -16,6 +16,7 @@
 |---|---|---|---|
 | 中文 · 前端校招 | [zh_campus.json](examples/zh_campus.json) | [zh_campus.pptx](examples/zh_campus.pptx) | [zh_campus.pdf](examples/zh_campus.pdf) |
 | 英文 · 市场营销 | [en_marketing.json](examples/en_marketing.json) | [en_marketing.pptx](examples/en_marketing.pptx) | [en_marketing.pdf](examples/en_marketing.pdf) |
+| 简洁单栏 · HRBP | [zh_simple.json](examples/zh_simple.json) | [zh_simple.pptx](examples/zh_simple.pptx) | [zh_simple.pdf](examples/zh_simple.pdf) |
 
 > 示例的 PDF 和预览图是在 Linux 上用 LibreOffice 导出的，中文字体用思源黑体（Noto Sans CJK）代替黑体。在 Windows 版 PowerPoint 里打开 .pptx，会显示为黑体和微软雅黑。示例人物都是虚构的；中文示例的头像 [avatar.png](examples/avatar.png) 是用代码画的原创卡通形象（源文件 [avatar.svg](examples/avatar.svg)），随仓库一起按 MIT 许可证使用，可以直接拿去当占位图。
 
@@ -26,6 +27,7 @@
 - **数据自动加粗**：90 人、56%、$2.5M、3x 这类数字会自动加黑加粗；年份、月份、型号不加粗。重点短语用 `**...**` 手动标出。
 - **中英文自动识别**：中文用黑体，英文用 Arial 并按单词换行。
 - **可换主色**：一个 `theme` 字段，卡片底色会自动跟着变浅。
+- **两种版式**：默认蓝色顶栏双栏；`"layout": "simple"` 是简洁单栏，主色只用在板块标题的小竖条上，右栏卡片排到经历下面，内容少时自动放大到 10.5 号字。示例见 [zh_simple](examples/zh_simple.json)。
 
 ## 两个版本，任选其一
 
@@ -35,7 +37,7 @@
 | 依赖 | python-pptx、Pillow（网页 AI 一般自带） | Node.js 18+，`npm install` |
 | 文件 | **单个文件**，数据格式和给 AI 的说明都写在文件开头 | `skill/blue-resume-pptx/scripts/` |
 
-两个版本用同一份 `data.json`，生成结果**逐个元素一致**（`tests/parity.py` 检查过 240 份英文简历和中文示例）。头像略有不同：Python 版用 PowerPoint 自带的圆形形状显示照片，在 PPT 里「更改图片」后仍然是圆形。
+两个版本用同一份 `data.json`，生成结果**逐个元素一致**（`tests/parity.py` 检查过两种版式下各 240 份英文简历和中文示例）。头像略有不同：Python 版用 PowerPoint 自带的圆形形状显示照片，在 PPT 里「更改图片」后仍然是圆形。
 
 ## 在网页 AI 里用（ChatGPT、豆包等）
 
@@ -121,9 +123,9 @@ npm test                                         # 自动加粗规则单测
 {"level":0,"overflowPt":0,"lang":"zh","movedToRight":[]}
 ```
 
-- `level`：压缩档位，0 表示原始版式，4 表示 8 号字。
+- `level`：压缩档位，0 表示原始版式，4 表示 8 号字；单栏版式内容少时为负数，表示自动放大。
 - `overflowPt`：大于 0 表示仍然超出一页。
-- `movedToRight`：自动挪到右栏的板块。
+- `movedToRight`：自动挪到右栏的板块；单栏版式里是被合并成「其他信息」的卡片。
 
 生成后在 PowerPoint 或 WPS 里打开，检查一遍，再「另存为 PDF」投递，得到和 .pptx 对应的 PDF。如果装了 LibreOffice，也可以用命令行导出：
 

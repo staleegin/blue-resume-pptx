@@ -5,6 +5,7 @@ const pairs = [
   ['skill/blue-resume-pptx/scripts/resume_core.js', 'docs/lib/resume_core.js'],
   ['resume_pptx.py', 'docs/resume_pptx.py'],
   ...['zh_campus.json', 'zh_campus.pptx', 'zh_campus.pdf', 'en_marketing.json', 'en_marketing.pptx', 'en_marketing.pdf',
+      'zh_simple.json', 'zh_simple.pptx', 'zh_simple.pdf', 'preview_zh_simple.png',
       'preview_zh_campus.png', 'preview_en_marketing.png', 'avatar.png'].map(f => ['examples/' + f, 'docs/examples/' + f]),
 ];
 let bad = 0;

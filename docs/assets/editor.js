@@ -95,6 +95,8 @@
     if (/^#?[0-9A-Fa-f]{6}$/.test(str(d.theme))) o.theme = str(d.theme).replace('#', '').toUpperCase();
     if (d.titleLabel != null) o.titleLabel = str(d.titleLabel);
     if (d.lang === 'zh' || d.lang === 'en') o.lang = d.lang;
+    if (d.layout === 'simple') o.layout = 'simple';
+    if (Array.isArray(d.info)) o.info = d.info.map(str).filter(function (t) { return t.trim(); });
     return o;
   }
   // 交给排版核心前去掉空项，避免空白条目占位
@@ -153,8 +155,11 @@
       var i = r.info, msg, cls = '';
       if (i.overflowPt > 0) { msg = '超出一页约 ' + Math.ceil(i.overflowPt / i.lineHeight) + ' 行，已压到最小字号，请删减一些内容'; cls = 'bad'; }
       else if (i.level > 0) { msg = '内容较多，已自动收紧到第 ' + i.level + ' 档'; cls = 'warn'; }
+      else if (i.level < 0) msg = '内容较少，已自动放大到 ' + i.fontSize + ' 号字';
       else msg = '一页放得下，未压缩';
-      if (i.movedToRight.length) msg += '；「' + i.movedToRight.join('」「') + '」已挪到右栏';
+      if (i.movedToRight.length) msg += state.layout === 'simple'
+        ? '；「' + i.movedToRight.join('」「') + '」已合并到「其他信息」'
+        : '；「' + i.movedToRight.join('」「') + '」已挪到右栏';
       (i.warnings || []).forEach(function (w) { msg += '；' + w; cls = cls || 'warn'; });
       st.textContent = msg; st.className = 'status ' + cls;
     } catch (e) {
@@ -201,13 +206,19 @@
         field('姓名', state.name, function (v) { state.name = v; }, { ph: '王小明' }),
         field('求职意向', state.title, function (v) { state.title = v; }, { ph: '前端开发工程师' })),
       field('个人简介（一两句，可不填）', state.summary, function (v) { state.summary = v; }, { multi: true, rows: 2 }),
-      h('div', { class: 'field' }, h('span', { text: '主色' }),
+      h('div', { class: 'field' }, h('span', { text: '版式' }),
+        h('div', { class: 'seg', role: 'group', 'aria-label': '版式' },
+          [['', '蓝色顶栏'], ['simple', '简洁单栏']].map(function (l) {
+            return h('button', { type: 'button', text: l[1], 'aria-pressed': String((state.layout || '') === l[0]),
+              onclick: function () { if (l[0]) state.layout = l[0]; else delete state.layout; render(); changed(); } });
+          }))),
+      h('div', { class: 'field' }, h('span', { text: state.layout === 'simple' ? '主色（用在板块标题的小竖条）' : '主色' }),
         h('div', { class: 'swatches', role: 'group', 'aria-label': '主色' },
           THEMES.map(function (t) {
             return h('button', { class: 'swatch', type: 'button', title: t[1], 'aria-label': t[1], 'aria-pressed': String(cur === t[0]), style: 'background:#' + t[0],
               onclick: function () { state.theme = t[0]; render(); changed(); } });
           }), custom)),
-      h('div', { class: 'field' }, h('span', { text: '头像（可不传，没有时右上角留空）' }),
+      h('div', { class: 'field' }, h('span', { text: state.layout === 'simple' ? '头像（可不传，放在右上角）' : '头像（可不传，没有时右上角留空）' }),
         h('div', { class: 'photo-row' },
           photo ? h('img', { class: 'photo-thumb', src: photo, alt: '当前头像' }) : h('span', { class: 'photo-thumb', 'aria-hidden': 'true' }),
           h('label', { class: 'btn btn-small' }, photo ? '换一张' : '上传照片', file),

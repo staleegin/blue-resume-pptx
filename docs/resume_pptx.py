@@ -6,7 +6,8 @@
 用法:  python resume_pptx.py data.json out.pptx
 依赖:  python-pptx、Pillow（ChatGPT 等网页 AI 的代码环境一般自带，不需要联网）
 输出:  一页 A4 纵向、可编辑的 .pptx；终端打印一行 JSON：
-       level 压缩档位(0=原始, 4=8 号字)；overflowPt>0 表示仍超出一页；movedToRight 为自动挪到右栏的板块
+       level 压缩档位(0=原始, 4=8 号字；单栏版式内容少时为负数，表示放大)；overflowPt>0 表示仍超出一页；
+       movedToRight 为自动挪到右栏的板块（单栏版式里是被合并成「其他信息」的卡片）
 
 ==================== 给 AI 的使用说明 ====================
 1. 从用户材料（旧简历、零散文字、JD）里提取信息，整理成下面的 data.json。
@@ -19,6 +20,9 @@
 
 ==================== data.json 格式 ====================
 {
+  "layout": "simple",                   // 可省略。省略=蓝色顶栏双栏；"simple"=简洁单栏（无色块、不分栏，右栏卡片排到经历下面，
+                                        //   「个人信息」卡片并入姓名下方一行，照片在右上角）
+  "info": ["1999 年生", "本科"],         // 可省略，仅单栏版式用：姓名下方的个人信息行；省略时取「个人信息」卡片
   "theme": "2563EB",                    // 主色，可省略（默认蓝色）；墨绿 0F766E、深蓝 1E3A8A、酒红 9F1239、深灰 334155
   "lang": "zh",                         // 可省略，自动识别中英文
   "name": "姓名",
@@ -115,8 +119,40 @@ ICONS = {
     'link': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAACcFBMVEVMaXH///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8h3Fl2AAAAz3RSTlMA8QoJaQMC/gzCAesN7y+s1AT7qGruxA5bmLr8vhdPgK1Zhi7nI2tlkzvlB9XawJEQ+B8F8jOIxVMcsVTXhxmwjNtmlBNW8I6yUNa3+iGNMPk1eAZtCzT9Q5Ueri2EWskbqexMj9Kz9rgYPOEiJwh0EnmdfqJk9JJzEbZ9giCmq07zltl3WF0+JKpsr5BxtFL3dntc4tHkzChVyokrV6SFyIpRMjd6vZ6jS/Uxwcanlxa7nDpeP2NE6WhJKnIVmzka44Gl6Ejt0w+5n2HQy4tL4xJkAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFZ0lEQVRo3rVa90MTSRSeEBNCAgQCGMALLWABRJoiRUBFBA8FBVRERM/zPHvv7e4sZ29nb9d77733Ov/SbWY3knkzO7uT3byfkjff++bNzNs3b2YXIQuyuvi/toxSB67/JaOtfdVqZK+sLJmNaZk9K2wbu7v5DubJzXkuW/gLpmI9mdptnX7zo1gkf5ZZ5J+ZhsVS/5wVetcz2FjyMuPmrziGzcgTSXHye6qwOUmJr4ekR7BZuRjPLHlSsHnJS6j/EclNqP+KOMoS6r8i+Qnmx/gp6/OTk3VqZcgdCudm8R7v4y6L/v9WmPoQ0T/nCxYw05r/w9UUqDqLQYxa4U8u9AKYd1cyBN2zwD+Og9wBUSP28iOvH8BaTPD3f2iaH6HgYwDYasjv3c3jn6gHXwKQ9w07+EnCf0UGO2noXSP+ZyfI+K8IWIUiA/7gj1L+K7KHBl836GCRpP8ILabR5WL+r3sk/UfoCMjZYvRRaX70B40PCMELA5Lzo0iZzAgWSfuvhB1tcUNYY5XDDs5qLVteq2nR2XKzaYt/RB0sh/yTtYZ0khB2OnlGT9ImflEH8wH/O1qpk+5T/7/QwdpU19A2M0Qd3KSxy3ppfowXNDI2I8Cp2wL+VJAlslR12DemqtwObDbsBVEREnSwFDjzKdGGrsXqxtPr4L4IbDJEM1QMCgh1Bd6jtR9RJrNgWBSKOljCy4sLlwGK4tgQZfbkW2zsd2/bqP0sobHziXIcUyC2Cvgb2P03X1EPqb/30eAr3NDFeHfUdhLDjwt09vfp5M9kGvwNTxkJlO9V2xV9TFOlW6d++JK3Yi8S5SV2gzioGueyLV/p1SeHyN+rNPpnFTSXHUI6aficaejSrX8eJ/8/AXuTVsgNMDn8O6J3vgXUabW69ZUakR8Dg+kacC2sA3IqiL5LXPnG1m/riKYjmZ9L0QX+OeAsrZxG8ztjz6fr64huAW3RdyQKPgM6GOKkliL6bOA6R7W+TJR5mJvtlMe5j5dx6i7HqKq20gMA9wPZRNkNp+JCFA5CKfkA0f4ecw730PwnAVObem0Aj0WBtfziB79CtMO6/JsdwGCvmoV3wiEEBrS0XErr1euV83r8iL3/WU70vWx2matarKG1O4jykB5/AfuQF3N38Ihc4hU0z8dmWobfxd6P1Wib7RR2CPtIwzZezC/l86NmNrvsibY9YNraeZuRmlvQUOR4z/CjO4L67Qe4/HgO0U+jlYc1+Mb9b7rZ+0+GPzumdRVonKBmsCZau1+09ZbADkqo5tfpxjfUhxYMrFnUAby/baIH6WyIbdz0LbeoTBfdP8M7yQ8AYHvlWKMvzD2I9SSZr344lUzjw6zq0zxdDKL3XdEMtdPYy0EW0jFK89c1YIkKtw1cePIwW0lU5kS3tPdhWEwRdZDBC3NGclvW52/Rfg9A/mteUQelEs6oGYdJH8IZQk/T4BVG/JNgcYp7xDagRAhK+4//QjIjqJXmrzktNinlFz+m+UFmMYyiz2T5N3kMOgB58YxofTn8AcOwA09y2qCU//iqYVjDhH9Fxn981G3YQSMw8QUl/M/vN3GrCPcDv9c0f4rHBD979HyVd8URPz8KM3vyLjgG92EL/Aj9y5hm0bfeB5qwFX40j/Na4MTYFcHgiRwe//hU8+/2eG8+HWtOvb0hs7X372Od2Jr/irwk//JEwv+IHEwwPzpdL8cvNT9662yj/7zznr3+RyKpKKH+R95jmX2PWOVB8UmF3xT/OWfc77ozzazDeVdCvwZwnLT4vUGZ+HuGrlobvsg4rktf+atN35SMcukbCtzILrk30gLvbwtvIXul9f7d4XXlnTjtxnX/jNshK1T/A5cWLGcTiJ0aAAAAAElFTkSuQmCC',
     'portfolio': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAACDVBMVEVMaXH///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9xxQJjAAAArnRSTlMA+S7+4zg2+AwvkAv3k5Iwke70CuT9NzmuDi1LAsrrtOpDJN8y4YQNxQFdYsnt8hQa/K2qZvZqP1gIh6NChQTN3DzHbzES+iHvK7EWwF6CYwYQ3sToBc5XGR7BJt3x9YGAWykXQBVP2G7S50fsiigJjxMYf+YDqEbwslB0VeB+y9VzfemMz/PUclOWNHd8v6/TcQ+awmUcrLCgpFbQe8i4jtZfEVmrmz5Ia2iZjWeFplepAAAACXBIWXMAAAsTAAALEwEAmpwYAAADjklEQVRo3rVa918aMRQPoB6CCxAFFUFRW/feu1pn1Vqt27pX995777333s3fWKooVrwkLyHfH+/zve83l7u8e3kvCDFhKmk+vO2c22TF2GoacdgMJd8+oUAh+WelG/tD9+HrZ7u4etzYAlaH4szMFVG3ZGZhGvKdSbzymztbMBOuZGznkH9YnYOZEVSUAJRP7+jFIPTVw16tA0Ohq8xjH36Dgjlw/DSj/sEtmA86w1YW/ZRUzI3aZLp+h4IFkB1L07+uI9weZggxGmOiSEMw7yLrdxK/du0SKTSIQNKUkfTHSPph2mVaKOkZrF3q+g+I82vwESOI0SleTT9DRzQI8TGDiUTzLZXvs5j8heh9VD2Z6Vr3ax2IxswGGyjU8xZ//QTq+mWeIg9u+hucoi6iKB85nBo1/F60lr6AldBlcqSGSu6dWTNBWSy/Fa9DZDQD2fa/QSZTpFEigvX62HANE7lqtX73JWjMofNrV/9F0+Axh87PWJU/jHLEHCo/tVzlAVhjDpVfspJftXAvKCL/2vLlLt6YQ+OXei87VG+wAw3W8Au9SZBAzCHzm5ZSpXGBmEPhzy9eXRCJOWT+u8X9hVjMIfIVo+dykWDMIfJnPQaVWCJ+eQzcMg3mEJqRqY+tdjQt1cCzmH/INfjDFjD58RsVyDWwoU1yDTaibXIN6lCiXINEtEOugRlZ5RrkoyahjIhhinJEMiI6XiOXQEbEgJdoTiAjYsArNCTwu6dj1I4K+TZJjHiDUIVMA7dnr/ZR4hSZ/2UDIQIZEU1/caNWruHPiMhIbVzSeiuQEZGGP270Dva9SEakUjW6f3Sie2W2vwtp6Xou1LeTK2nlIgG7II6hSPecW950kqnK2M+rHzTJWALP4Rx/K2sh9hGfQT9zpbdVx6PvBJSq7/IYpAAMjnHoO0DV9h64wR2QQRLcoArWkGgDGzTDDIbBWQS0+3QIajAANKjpAxrEQLtOjcBJKgL3tRqgWxco0gtBBsoU2GEfbDd1Ed78awdtpw5z9Bf3miAOPE3S0qsAgzSeDmww4BnucfV4tTsBW2AuNNdJNkB5Q4wGJ3g74TUVbP/oPfy9/PhsFoNpgdMCg066vuuI0HGH2TM0g8uCByos1eQcfncuEsXgfjMhbb8RiEMnB86qFntuB+hci6WsYL0OZ/ETFDjoy7641hRDnw2jAGNyosKWFW3ShJlGHr8oeQq59S93tkBme65lnQAAAABJRU5ErkJggg==',
 }
+# 简洁单栏版式用的深灰图标（#595959）
+ICONS_DARK = {
+    'phone': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAAApVBMVEVMaXFZWVlYWFhZWVlaWlpZWVlZWVlWVlZ/f39VVVVYWFhYWFhXV1dYWFhYWFhbW1tcXFxZWVlYWFhYWFhZWVlZWVlXV1dYWFhZWVlZWVlYWFhYWFhaWlpYWFhYWFhZWVlYWFhYWFhcXFwAAABXV1dYWFhYWFhYWFhYWFhbW1tYWFhYWFhZWVlZWVlZWVlcXFxaWlpZWVlYWFhZWVlYWFhZWVlZWVna3J8PAAAANnRSTlMA7Zk2MPP4LwIM7uM9Ltg4JNb0wJL5Q5slkfKQRPe+zkLXCwEmkzHBRQ6cz+Q5vyE+mjfN673D32sSAAAACXBIWXMAAAsTAAALEwEAmpwYAAABOUlEQVRo3u3aSXOCQBQE4BFZRVTcd6PGJdFEs83//2k5JIFLpux5ZA6p6j4370MUsGCU+j3HUaur4XTXL3Nlk/uDtk5vjM+/NrQgjSa8/6L5Wtc6ILDUwhyw+UctzhACHuWABwEtObCGgEAOBBBQ1N+yLdLfRqtiEzsgQn/XvhCIUSAWAvipT4AAAQIECBAgQIAAAQIECBAgQIAAAQIE/gRw/uQXfna9FwIrH/oM8f4kBAQhQOAWsJjVN5vXSegKSLOvQpS6ARbZTyMKnQCzstJ3AtTLStsJkJSVxDXw8D8P0aSs7CoBU8PGYXED8geGylRVemGdfgv+2dTIIWBkPE/DfjtJnnaDiq/c5/Jr3R12D/+Qzu+BfxIu744XbqhmTTQfXnqi1PjZfv6yo2wy9HKL5Q9B7pm+30+kOWgXz9xUnwAAAABJRU5ErkJggg==',
+    'email': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAAB3VBMVEVMaXFVVVVZWVlZWVlZWVlcXFxZWVkAAABYWFhZWVlZWVlaWlpZWVlYWFhfX19YWFhmZmZZWVk/Pz9ZWVlYWFhYWFhZWVlYWFhYWFhYWFhYWFhYWFhYWFhXV1dZWVlaWlpVVVVdXV1XV1dYWFhZWVlXV1dYWFhYWFhYWFhaWlpXV1daWlpZWVlYWFhZWVlXV1dZWVlbW1tZWVlYWFhZWVlaWlpYWFhaWlpZWVlYWFhYWFhaWlpYWFhiYmJZWVlVVVVZWVlYWFhYWFhaWlpYWFhZWVlZWVl/f39cXFxZWVlYWFhVVVVYWFhYWFhcXFxYWFhISEhYWFhYWFhfX19YWFhaWlpZWVlYWFhaWlpZWVlYWFhXV1dYWFhVVVVZWVlbW1tYWFhZWVlYWFhZWVlZWVlYWFhYWFhYWFhXV1dbW1tZWVlYWFhYWFhYWFhZWVlYWFhZWVlaWlpbW1tYWFhWVlZZWVlZWVlYWFhYWFhYWFhVVVVZWVlZWVlYWFhZWVlYWFhWVlZYWFhZWVlZWVlZWVlaWlpZWVlYWFhYWFhZWVlYWFhYWFhVVVVZWVlZWVlaWlpZWVlaWlpYWFhYWFhZWVlWVlZZWVlZWVlYWFhZWVlYWFhZWVlXV1dZWVlZWVkVGvw0AAAAnnRSTlMACfnzgCRvAe7+kUT8+hD9Be0EsTTeJUKzmcGIykOrEQMTPar4I9jdvncdPhTX+ybCONbvNkH0IqK7wFXPDd8Y5JsaMONTOQIhzuwM8XAWfwfH6witZuHbTPBFICsPvA5U5Zzqy4Lph10nl7BOtV6Wpk8cyTLU2a/ycRK/hlyLwyykTdO0H5rSUeK4VhvnR1LNM+aE9jW9PJij4NE69S/VufIAAAAJcEhZcwAACxMAAAsTAQCanBgAAALySURBVGje7ZnnWxpBEMZXEO7o0psoVUCiUTRqbImxxBp7S++999577z33twYjuwcIx53sPI9Jbj7xcHO/OZblfWcWhOSQQw451kps76lp4ahGS91jHcGv93Ag0e5Y5idYDijY4J/nB+NznFmVKhDjAMOT+n450PCh/bAF3KgGtkAdUsIWUCIOOP6BAnpYvh51wxaIoiOwBW6ikU5I/tAIQkYrHN9qXJJTRm0A+oLLt6YdJ/Eegn+AtzS0bTd9fsOWTFO2lJvo4jXaihzfv0/V2Eb3ruwsHlXS43eqeK7tKZN+VXaGFv94WRrJvGhGLHeiGhd7Q2WZ2H7MC5zi2CU1fTaA36ltKJ1/oRXTPtmxXNfHGbKb9LR2D6NWZPiBlSzThs2l8A+/xpw9VdmGM9eIr6xzrZ6/cROmvIvmOpohjrI/m/SoJ9qDZhV5LLPKSLbu/Gr48zZ8f/VMfk+e+4Izur5J5/PP1xwtZPr15X6cdFpiv/RRza+wQaCriBEJPDYkhX/pLhHm58Jty9QCzpzQakTz27A2IN2rYn2RRjuBk08Oi8MvduA7Klaqfp7G660D558XNVtNDuL8HZPiOrurR/Ed/nhRu9Z7ibN0NIluHUNkyzXahfl9CZxZppXSm3YT5dgVEuxLAjjv4mVpza/iGhZYZqzgMinGSJI6LLm75oXLVmCZ+n6KEEiB9n2fk9z/MN91V0CMxCNx5jH7K/diWI2Xxy9oUsIDSGUEP+TOJznDXa9Imy0y4TSdI7vwQ4ZLhA8RbVgwlzZCaW5byJnJ2bQOmO6R37rFqyl5RrtTS3oo1fhBlq0c57uqlx4aQ+DirULHTP3DlKbM0PV8+C43vTH2u24l32mnOidfUWXjW2doD+Im1wCP720zQEz6D7y6yPR0xOf98X+dVcgF5AJ/QQHgY81R6IPZJOqBLfAV6WALpHqrz5D89pS2D05xsH9QoKAZjB9c9ifHDRh+jLdZnztJ+fegTLqd8t+Hcsghx5qJ3wOUnkWsXwrMAAAAAElFTkSuQmCC',
+    'location': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAACN1BMVEVMaXEAAABVVVVmZmZYWFhZWVlISEhYWFhZWVlZWVlYWFhVVVVYWFhZWVlVVVVfX19ZWVlZWVlYWFg/Pz9ZWVlZWVl/f39ZWVlXV1dVVVVcXFxZWVlVVVVZWVlYWFhZWVlXV1dZWVlVVVVVVVVYWFhfX19ZWVlXV1dXV1dVVVVYWFhYWFhYWFhYWFhZWVlYWFhZWVlYWFhZWVlZWVlZWVlXV1dYWFhYWFhYWFhYWFhWVlZYWFhYWFhVVVVZWVlZWVlZWVlZWVlZWVlYWFhZWVlZWVlYWFhZWVlZWVlZWVlaWlpYWFhYWFhZWVlZWVlaWlpZWVlYWFhYWFhXV1dMTExZWVlZWVlZWVlZWVlYWFhaWlpaWlpbW1tZWVlYWFhcXFxZWVlYWFhYWFhXV1dYWFhZWVlYWFhaWlpYWFhaWlpZWVlYWFhaWlpYWFhXV1dZWVlYWFhYWFhZWVlZWVlYWFhZWVlZWVlYWFhZWVlZWVlYWFhaWlpbW1tZWVlYWFhXV1dYWFhZWVlYWFhZWVlZWVlYWFhaWlpaWlpYWFhaWlpZWVldXV1WVlZZWVlYWFhXV1dYWFhZWVlYWFhZWVlZWVlYWFhYWFhZWVlZWVlYWFhZWVlZWVlZWVlZWVlXV1dZWVlYWFhZWVlZWVlaWlpYWFhYWFhXV1dZWVlYWFhYWFhYWFhZWVlYWFhZWVlaWlpZWVlYWFhYWFhYWFhYWFhWVlZYWFhZWVlZWVlZWVlYWFhbW1tYWFhZWVly+JeGAAAAvHRSTlMAAQMFF/kH/fz+9xtzrgYI9vDvBPjZAu0dDBb7FVDxiSDlHgnuEORXPRLdw0Lse1GAN6l1wjrSinCzNawrD7ySeH0/fCWrxHJYOUSVdobOd9PXVnQKzdx6W5NMLTiowSTRRYhdu2+wY41gNvQi1Ul+VNpk6sDLSoLQsYc7J5fPQ05elsWm3k8w4xGMEzLU8iNxv9il6L5ci2yktBS5mkbiuGHIM+aEWo/HZeuUzL1m4frgX8Yvp/XWujQcsp/7UGoAAAAJcEhZcwAACxMAAAsTAQCanBgAAAPHSURBVGjetVllUxtRFF1IQhIIgaRoQgju7lrcvWixtmjd3d3d3d1d34/rTDudMuTet0825/O558zuvr3viqKwwbdstnimKC3BYEhIK5pxz/7wVTTEz5LSaDIPtl/TAdqox09OGQkI0/erQdLykdOxhIJNOZVS8rr8cKKCcItOXD+lmzDgYqugfFCbmTDBXOUnoh/zkDCjfwm/fms04YAtg1c/259wwZDMp//WSDhhfMGj7zIRbhgXsetnhBABGO6y6tdHEyHYzrHp+/UTQbxm+x/aiDCqmPKDWdzAXKuuv2ApkUC3eubLJ1I4r5r/M+UMMiNVDLqIJCwq9+NlPNQ03jTq0Okco5YCyo/+mH6LTqKBwTuj/tMc7mCUOEQ1mMLC8uaVEBENGPM+TT8AeXZzjs98qk8XknCNtGqmhCdRJiMO1ykGpXBINczOgtmBlL/YBr9/hO5TDtIT8KqyDD4/6EuNgO/VR6jBRpDfgT+yGwx4gPKLwf8rCjfQg6duAuXvgOibaec6ne8rg5m6iWbQC0XsRekfIHouzaAQijiC0sFUHUUz0EMRL1G6AaJbqQUCFBGC0k3aGJhQerA2r+grSrdD9BaawS6w6UHpA9x3YDsUEYrSn0P0AprBISiiEaWPgZ/MQfkE4JVwGOXngLnLjRucBAPq8LYGTtcRGD8OTtf7UYNbcFna4INcOIHwBZuKP/J2+BIchNk1MLuTcijWIZc+2OE1I5d+FsVgN9Z/DXqWLXVYn0jtmQuwcqp83peOC8SYV6iV3Xq0IvQv1s85/9fwNtpFbz/SKH1qem+h3mrVF+Y3UrroDSqjsBWy5fuQWgcVKqf/TXWW55IzGFbvAm/L6C9kaGNHnOL67ytYGuUJcYMnbKOEHlH9UMYpZ61gr29MYR233BEzOMg8L6pMEtGPTWSfSA2LGBzlmamN8evf4BoKJt7j1U9K5Rs7LuM8Sea1vIPTPXwGi7knv31caXUgkttAaeGYnTpzRabjHewG28S2E1tY9TutYguEEcYBsH+FIggLm0GJ8Iol7A3TLRYmvsQJCFfXt8fJrKGeqhs0y+3RvqjpX5Jc1CW+0zbHeWIfddlizFCk8YxmsFyDZalfEa6/Jl6LdewxA6Yf8lmbhW81ZtCu0b467AKsn67ZVjwGXEvZYrTbuX+EDA5oudXP45ogC+DEcY867pSmBh5ljHmrojFeyZYpqgv4M3P1e/o0N1BOz/mhnSsVL6CGbd4h8UOP/9P/5OsVA2X12b/6q+oVLyH7TzXpdCleQ+5Nu720jCvkN4wqLzwXzIsLAAAAAElFTkSuQmCC',
+    'wechat': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAACl1BMVEVMaXFYWFhYWFhYWFhZWVk/Pz9ZWVlZWVlYWFh/f39YWFhYWFhVVVVZWVlYWFhZWVlaWlpZWVlYWFhiYmJYWFhZWVlXV1dMTExfX19ZWVlYWFhXV1dZWVlZWVlZWVlZWVlZWVlaWlpYWFhYWFhZWVlZWVlaWlpdXV1aWlpYWFhYWFhWVlZZWVlZWVkAAABbW1tZWVlZWVlYWFhVVVVZWVlaWlpVVVVISEhYWFhZWVlYWFhcXFxZWVlZWVlZWVlYWFhZWVlYWFhYWFhVVVVYWFhYWFhZWVlZWVlYWFhZWVlYWFhYWFhYWFhZWVlZWVlXV1dYWFhYWFhZWVlZWVlYWFhaWlpbW1tYWFhXV1dbW1tXV1dYWFhVVVVYWFhYWFhZWVlXV1dfX19YWFhYWFhYWFhVVVVZWVlcXFxZWVlaWlpaWlpYWFhYWFhcXFxZWVlaWlpZWVlXV1dZWVlZWVlYWFhYWFhWVlZYWFhZWVlVVVVYWFhZWVlYWFhbW1tYWFhmZmZZWVlYWFhYWFhZWVlZWVlZWVlYWFhXV1dZWVlYWFhYWFhZWVlYWFhbW1tYWFhXV1dYWFhXV1dVVVVXV1dWVlZZWVlZWVlZWVlZWVlZWVlYWFhYWFhYWFhaWlpZWVlYWFhYWFhYWFhYWFhZWVlZWVlZWVlYWFhYWFhZWVlYWFhYWFhaWlpYWFhZWVlYWFhZWVlYWFhZWVlZWVlZWVlYWFhYWFhYWFhZWVlZWVlZWVlYWFhXV1dZWVlZWVlYWFhYWFhZWVlaWlpbW1tZWVlWVlZZWVlZWVlYWFhXV1dYWFhYWFhYWFhaWlpZWVlZWVlYWFhYWFhaWlpXV1dZWVlYWFhZWVlZWVlYWFhaWlpYWFhaWlpZWVlZWVn7/I9sAAAA3HRSTlMA8hox7QT+/P0C+rIGKKffRM73Db5NHQoIjs8mR8L7+eFV8TSPfUETZusuMvarARm3ooIJtk8DB629FySAqRSY+EIrFVbbqKOey3nXyciuWkiwv9ngEQ7aIxwgbg/0u5dDEFzDigy5FudSM+ZlC3UtiTpQ1paFLO9eGNjNXyebBWykr6XQ0+5d6oiE5JAqxD24QBJXNX7wb9zRtayNIp3Vc5zAabGSym143nww44xi86pTulhxlZ+LtJrSRuJhmTdbTDhqL0qGRXTdzHAfg2dLx3dJ6MblJaE7s2DU4C809wAAAAlwSFlzAAALEwAACxMBAJqcGAAABH9JREFUaN7tWWVbWzEUTimlt0ChUGC4DdsYssEY25DBkDHBBhvM3d2dGczd3d3d3d09P2YVWG9yLUnLlz19P8F5Tt63yU1OzjkBwAknnPjvMTdxU2jUI8PjAI3DqT2nXvU60AY2QRvp0c7f6DD2kWXZ0VCI8OGTAhxBf2awCkqBO1xg72ptTYfyiOzvaQd9QKYbVIT3sGRGel1/FSRCx85M/DmjICnaTGDgb3kXUmBJC1r+uGhIhZ5d6findYGU6OFCw7/BF1Kj92hy/hBXyIBegaT8HXwgE9qSCgSh47rcnHK6NFxA5+qVtfo4alpBuEE5ZNRly9dTt8L4g4aazU9QzU5EAmHIoPmNseYhyr+20dkLsRaT8PujTFcazYERfKtb05Zpj4bXWQQCfqjAuCb7GGQx/q0n6p2kzN8aW+stojPgckRnAMOVj9sITMCng9Vehn1j0W8AYXdFgemCYKw3mxPxXbTXsosW494+Svz7hOdHmzoltkIrPAdFWc9fC29RpaAXxXaItcu93r2P+lBekPBWQaAdA/u3teV9iOPcRVp2rjROZxpnzOverbJwZXREQ2RJ9sxp0kd6ECX9jxrToO+fPuLfaPrMceICPeki9FYANFsqxXOP4ASxezSYgt49VgN0ZX2lHcYv9lQKFHJo9dN07hVmXJiHC2SSX5E1QLfNXcnLbRG2ToNJ+fumgOrdJI63QxCBCYT8VbUg5Q+Zq+sDuWAqlcslgtqdpJO9EMcTyCBLuH6DPrvIt4NKzVO4TjLiF0jeTXNexvCuiTySX1QLdtCdeD+dLWn3VnZfDWpoU7+DtimcV3TeXg2SEEOqemRiDHIk9usHTM3mRxBVyj8BzTwlgRjQEok+HS3zj+LZ7luYtvGdbknmLULkg2Lkf4N1XInNYi0/M2bznHx5EbybPL8PiEeT+8nWYR62+y1NJHLG2gSMp2QFVoEVYplE1wabZazFko9cEvW8s6CWrf4MoAg71kNMY/qt58dpc4anxgI5v1QMlYuS8QDfyVz6jUx03/ruOZfKYV5z+CFpASfJ/wUY3SALgpCoWhAh5feVNCDi8EAvhtCBEn4bwQY2geHY3Ta5t7hfEvjMJrAcvz2NRaJ+FWATm0ClsBgUXaX1QM0mIKwdnolX3GAzm8AIgYB4yNieDNYwCfjj/HUS5fg6UMHCz1XjAqFNoavt2NilVTbPBJDAIpAuWKFFjfTWvCbecCLmaNj8V/Ulb4CLlkGgPc6vMRdN2uKFYinyUnr+QkH70GCiX7JQoptEL3BJQJLLLdM7qoyAMEzYEozRyxRCTym/goq6b0hZyw2j7hnW9aLhP8bQlUyporgJMlj6qvkrSflHpbF1hvVnCX9/IGBEP6LeXq4dDfq0Q8qV6BH72v/lSrn4DHvfL1qclO+xzrP/iWTAJNliLcQBrzC6ITPwO06769pG618vHfOQlLzuXq6ft6V7696jNOuOub3zIlg8ytmDifEuE3kzmxNpmktOcz7tee6YDRc07+vh5lXLmv2B0vlG64QT/xn+AolHYj3FTDdlAAAAAElFTkSuQmCC',
+    'web': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAACdlBMVEVMaXFZWVlZWVlaWlpYWFhVVVVZWVlYWFgAAABVVVVZWVlZWVlZWVlYWFhYWFhYWFhbW1t/f39MTExYWFhYWFhYWFhYWFhVVVVZWVlXV1dZWVlaWlpaWlpYWFhYWFhaWlpZWVlZWVlaWlpZWVlZWVlZWVlZWVlZWVlZWVlWVlZZWVlVVVVcXFxYWFhYWFhXV1dZWVlZWVlZWVlbW1tYWFhVVVVYWFhYWFhZWVlYWFhYWFhWVlZVVVVYWFhXV1dYWFhYWFhZWVlZWVlYWFhISEhYWFhaWlpaWlpYWFhZWVlZWVlZWVlZWVlYWFhXV1dYWFhZWVlYWFhYWFhYWFhYWFhXV1dYWFhYWFhZWVlXV1dYWFhaWlpbW1tZWVlbW1tZWVlYWFhVVVVZWVlZWVlfX19aWlo/Pz9YWFhVVVVXV1dZWVlZWVlYWFhYWFhYWFhYWFhZWVlYWFhYWFhYWFhYWFhZWVlWVlZYWFhZWVlWVlZaWlpYWFhZWVlZWVlYWFhZWVlZWVlYWFhYWFhYWFhZWVlYWFhZWVlZWVlZWVlZWVlYWFhYWFhZWVlYWFhcXFxaWlpYWFhaWlpZWVlYWFhZWVlYWFhZWVlaWlpaWlpbW1tXV1dYWFhZWVlYWFhZWVlmZmZZWVlYWFhYWFhZWVlaWlpXV1dZWVlZWVlZWVlYWFhaWlpZWVlZWVlZWVlZWVlYWFhZWVlXV1ddXV1YWFhZWVlYWFhYWFhcXFxZWVlYWFhYWFhZWVlYWFhZWVlZWVlcXFxfX19ZWVlZWVlbW1tYWFhZWVlXV1dZWVliYmJZWVlYWFhZWVlYWFhXV1dYWFhZWVlXV1dZWVnyZNh8AAAA0XRSTlMA+84t/Qn29wED/vD1ye9xHAIK+ivpzAY2HfkfY89tMOKAM6XLcvyi7TX4HiRzdiCr8+gqcBvrMaPbFy8YuyaTlai0RQcaZj70nerQfbUpgdRI8i6fRpk353R5TBmOJ8VWFabREBEEWQ9aamyNbtWhku5ONOORMpCLLHdrFLnxmkd/5oSUS3pbiW+nrFiWFmDKRKDXKMfTUkEOI2K/nlAFOXxUvCJJfuWDgjt4317k3iVXE6pTr1whZ+yKe1GprgsIddw4pJc9tw26vs1lQME/Ou2dZEYAAAAJcEhZcwAACxMAAAsTAQCanBgAAAVpSURBVGje7Vr5X1NHEH+RkASQEAwkgFyKEEBQAUEFK1JEKV4tiBeKAi1YtdXW1tajXvWo1qO1tda7933f933f+x81meHBe7uzb19I8vn4A/NTdr47M2/ZnWNn0bSbirZcLC29eClh6uf/nMfCVHmmMa5qp1cM/7ijgw1TdvcwKyc3Vu13/fVPeRv+fNvBRsh/Ank+79X8O2NQ/3SokrFz+Pv+MmYgxzHkLmbMfX7BGNVn9TvDqi540FY7M1ENavX8Gf5d9tOKMaif/LUTNC2BUXAp42hCEIBWGDhPRbsZKSdrUM+tOP6SCbQekVtw1FmYGY3+rnRdzXN4klyigYn40c/q4wt7bKv3fO/XpTYhZyEj6ChiAX2cl2FT/6T+USVfAae+kjLgxvM7NMqZm2xHv2/aqETtILB2MpI24v53jHIKZqr1r2kwqPgCWI0u2sDEPoAfNLCyK1T6p95nVJEEvFImoZMAJxlZaTmK708zzi5AZoHMQADxe4087y7738+WoUczKeEKH2V213C5nJJ/WG7gMfwsM7Nhskz/twPmmT+gV7wqN/AABCpPMRdFJKfV08KJnwF2EWOqv9FtHLeENrCXl/4I2DOsDFTDlLt5NunTux3cLOcHxmhG0yPoKKkc299ExM8AL7wUA4fbyoArWTyoEUpPEQyI3rQaMzGzpG5yExi7R8gvNcKcc8QhF2ilnjk5av+UM/CxKFsHwHJrA5iQukRglll/U6oYyjBFrbU2cAQ3UNyo1CSTgVmi6DRMBUxBG2DaBBFoMepf4RQnrMJqRWWgB6btEAFnlsHAXEJyHSBTVAZegWnrCCSkjdM4xY0WkfFyJ2CFTEmfwcSjFFT5HWBLSLnD9tyAseMWE98AbD2JFQLWrDaw0WKpMwB7nMROA9aiNrCDzpqGePQUibUC9qLawHKY2E1iz8AeO0hstyxKCtmRqo30iv5GGKqi5apAbp7awO0wcQENRmqwf2loOsgVqw3Mw5RLg/9Jt4fNB7latYFi7ALQ4AthaCsN4f3aqzaQjTd2GswPQ9U0hAWPS20gDcsnGtwWhp6nIaycytQG3Jj2mdTTEm4g4X+ihG/yEA01xu2Y0tGa5cbF0SKdiMuJDBWReBCkg92cuAS7QXm4flJ9vTHW14dIbEBW+IbpfcBOqQ2ch4knSAxvg2+S2NZ4pMxqi6S/zG7Sx87XShL70aJseQiwbWoDi+UtK1dwvCgcp/iR/BJ4WHVK0V9mE0i/rWtsj8rAMUmzgruJfyi7iLfZu4g/oeoldMXWSshsFxdQZN4FoobPst8MqROBb/iXmk4yYWvaa9YGpsCkfHH9L/EHSTwHB+00pPAacZCpu3Yp6eTtwV5LbUA4IWJLTWvy89vUZ7cpuJ8/5Y4iytsyeOnNdtuam3l2Ke3Pq8iuoI3G7Gp7jVktmStS3sKG8Duq1rL2rplbMEkWkmY2ULWRsjnexDXHLZ5B5pjb76+r2vt7iIRv/USxyytWhfLybviBwvSI51U8spjXUEQfL3N717TCtDWq1FCRLdQuZ2WPRPsB3m5gdeSok0+9waU/XyS8MxloO4CDa6N75gqf1hDfEqknw4V7A+9l9h7qIoEvz5x16LqtGbGRBefNtp+j6zbpUn/DOJd6LPUB9MvIs2ddNFVA5r4DKPY7jo+LBvYi8iuODuzLjLLQ8JU4DReRoOALgRuG115niW8MtUxvKHK5CmC46eUeMDrfw0AVyfZlod4xlktV19x6ea71mK5yjpc1PVe6r1XF8q8gV/7wDq/+E0NC8g8hr6386pUtsVZ9Pt05D434eG2r7va5cS0wzy6El3F3c1/CathL1zMyrv92c9XV/wNUSqVg60qaiwAAAABJRU5ErkJggg==',
+    'birthday': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAABOFBMVEVMaXFYWFhZWVlVVVU/Pz9ZWVlcXFxZWVlISEhZWVlZWVlZWVlYWFhZWVlYWFhfX19ZWVlYWFhYWFhYWFhZWVlXV1dYWFhZWVliYmJZWVlaWlpYWFhVVVVXV1dYWFhYWFhYWFhZWVlYWFhZWVlYWFhXV1daWlpYWFhVVVVYWFhYWFhZWVlYWFhYWFhZWVlZWVlZWVlZWVlYWFh/f39YWFhZWVlZWVlXV1dcXFxYWFhYWFhYWFhZWVlYWFhaWlpZWVlYWFhYWFhWVlZYWFhaWlpZWVlXV1dZWVlYWFhZWVlaWlpYWFhXV1dYWFhWVlZZWVlYWFhYWFhVVVVYWFhYWFhcXFxYWFhZWVlZWVlYWFhYWFhZWVlXV1dYWFhZWVlYWFhaWlpYWFhWVlZZWVlYWFhMTExZWVlZWVlBSnDSAAAAZ3RSTlMAxmkJBCUL0QfzP+3sgNgI9cruydNGmW8N3D7SBiZUz/34vkcxPVVuD/SC0Olt/l7Fq8QClWfOHRbXN3+Px2bC+uAvRSLIKfxwo0zVSYEy1C73DMFfJIjWZJzASkObkUhEXCyaVgr2DtIqnAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAgFJREFUaN7tmVdXwkAQhQWE0FEEFRAQO2LBLnax94K99/n//0A4ARKSnRyOs0+euY/37sxHstkNZ9PSIlZ3bEiKj2oXYF+Gj+oQYG9Qgo/qAABibrqPabutXADDZB+TY6cyHjZniD6m7j5QFaX5mBbnq+NhheRjCrXXxkM7xUfVVR8PYxQfVYdWsEHxUYW1Aj/FR+XRCtIUv5lbNEvxm5nkJYqPyq3Uxk+RfFwL1Yr1EZpvcQ3jqx6Pzd5K9Vl/FehE8RnAAAYwgAEMYAADGPB/AVvPwSyQlS18vgnbJ0sgTQ9Oc/94GCQqbDo7SkrtD+C7NgD6QLJKhvkF6XpqANzLB3Q2AILyAQXsfEKWPOjqlSUGMIABGEAJeJ0ulzO+nDZXREa9yXLmPVHE2eX3dXw5ZwlI9Os22Fxji7NHLetPGNofa1lUwQGdPXqvNdCr3xzdFllj3c2EGJCZNL7mUm21FhcWWebKmH39iADBAfOLunir9rgtmrPzMzUT1Z0GjQCfze4QHvWv5f2+/FxIeDa5Nu3H6hx2mw/7ejCXR8vcd3hLFSf+KXoNFKoXfmrOPiL4TSkeqdnRuXX/IYupS9X/9lk+Du8W7WsPWBMPLZ5NvPRg/V8j+PIxLi39kowaVrYi+BiFbACJygZQ3jgCgqy+qeSQjLdrBjCAAQxgwH8C/AJwq3rVb0vwPgAAAABJRU5ErkJggg==',
+    'github': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAACslBMVEVMaXFZWVlYWFgAAABdXV1ZWVlXV1dZWVlZWVl/f39VVVVYWFhmZmZaWlpVVVVYWFhVVVVYWFhaWlpfX19aWlpYWFhYWFhZWVlZWVlXV1dZWVlZWVlVVVVYWFhZWVlWVlZVVVVZWVlZWVlZWVlcXFxaWlpXV1c/Pz9YWFhbW1tZWVlZWVlZWVlZWVlZWVlZWVlYWFhZWVlZWVlYWFhYWFhXV1dZWVlYWFhYWFhZWVlZWVlZWVlbW1tYWFhYWFhXV1dZWVlZWVlZWVlYWFhYWFhZWVlYWFhZWVlZWVlYWFhZWVlZWVlYWFhYWFhWVlZYWFhZWVlYWFhZWVlZWVlZWVlZWVlISEhVVVVZWVlZWVlYWFhZWVlZWVlbW1taWlpaWlpbW1tZWVlYWFhZWVlaWlpaWlpYWFhYWFhZWVlaWlpYWFhZWVlcXFxZWVlZWVlVVVVaWlpbW1tZWVlYWFhYWFhZWVlYWFhZWVlYWFhYWFhZWVlYWFhWVlZYWFhYWFhYWFhYWFhYWFhYWFhZWVlZWVlYWFhYWFhZWVlYWFhYWFhYWFhYWFhYWFhZWVlYWFhYWFhZWVlZWVlYWFhXV1dYWFhaWlpZWVlZWVlZWVlZWVlYWFhXV1daWlpYWFhZWVlZWVlYWFhYWFhZWVlZWVlXV1dYWFhVVVVXV1dZWVlaWlpYWFhZWVlYWFhXV1dYWFhZWVlYWFhZWVlYWFhZWVlYWFhYWFhaWlpYWFhYWFhYWFhXV1diYmJZWVlZWVlYWFhYWFhaWlpYWFhZWVlXV1dZWVlYWFhYWFhZWVlZWVlYWFhZWVlYWFhZWVlXV1dcXFxZWVlYWFhWVlZYWFhZWVlXV1dYWFhZWVlbW1tZWVlYWFhaWlpYWFhYWFhYWFhYWFhaWlpZWVlVVVVcXFxYWFhYWFhZWVmPMFkQAAAA5XRSTlMA/vcBE+1J/PkCEv0FZhvuAxp3CB9ZfKJ4Kbo5DPSALwm24U0hMx0ENByRe+Ln9vsx6PPMRSC58n9eZ3onu910FDzc7yud1X6xlsWrYskyqvguhmzIzQcVwm+I1oMqMEwZP1TLRC2+X2kRz64LYTYPIg7qwKHkgYzEcaDYLOzScLNWnqko5oSPmNt54MH1sLKJ09ojTmBq5VOOk1o+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',
+    'user': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAABpFBMVEVMaXFdXV1mZmZZWVlYWFhZWVlVVVVZWVlZWVlZWVlZWVlZWVlcXFxZWVlZWVlYWFhYWFhYWFhZWVlYWFhZWVlYWFhZWVlYWFhYWFhZWVlVVVVZWVlZWVk/Pz9XV1dZWVlYWFhZWVlYWFhYWFhcXFxYWFhYWFhVVVVISEhYWFhZWVkAAABYWFhbW1tZWVlZWVlYWFhZWVlYWFhaWlpaWlpZWVlYWFhZWVlZWVlYWFhZWVlYWFhbW1tXV1dYWFhZWVlYWFhYWFhYWFhXV1dXV1dYWFhYWFhZWVlYWFhZWVlYWFhZWVlYWFhZWVlYWFhYWFhYWFhZWVlZWVlVVVVcXFxZWVlYWFhZWVlYWFhYWFhXV1dXV1dZWVlYWFhYWFhZWVlaWlpYWFhYWFhZWVliYmJYWFhYWFhYWFhZWVlVVVV/f39aWlpZWVlYWFhYWFhZWVlYWFhcXFxYWFhZWVlZWVlYWFhaWlpYWFhVVVVaWlpYWFhZWVlZWVlXV1dZWVlZWVlYWFhZWVlXV1daWlpZWVlZWVlYWFhZWVlZWVlYWFhbW1tZWVkbvEK5AAAAi3RSTlMAEwWP9O0V/vzzjPgk+SXy8ev7+m9Zy23b9RiRuQRXU9jOQmsW15kbB8f2ARcZidbKt41gIuXA0LHptu4nQ04//XzjPSMu92eFtOwUUYBWN3/NrgYLdZhQbpBaIJ1zVGRVaM94DZabydkSAkS/ld3oviGfi2ykd4oMH7PiyHQo3LK9Jmbho8FqjogcUD0cNwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAq1JREFUaN7tmGdTIkEQhpe8CyJIFEFEEUSUoHemM+dwnvGMl3POOXo59Z8+q+6LA8syoafKq+L5ulvvUzW73TM9ikJL03401jjs9w83xqLBJgUZ024ICIphE2L8n70IlGG1dCDFmwMa6BI5k8HIHxmAilz9Ip7fooEBnmXR/BM+MES9IpY/D1UJC62PWl2g7vDn13mBAu0jb/7mAFDRauYUXANKPvDld1hpBVqOS7AH1PRy9bcIvcDK0/l2gYEkhyDEIrjFnp9zsAgc3cyCfWAiziyIsgkszIIYm+AUs+Ahm6CRWWBjEzQwC9xsAtfxE0hfogPZH1n6byq90IJsghVmQbfsZqcUWQSdHPtBmEXwk2fLtEreMhULvcAp+dji4ZyoXtIKLvCONq10+etmyYffEf7j9TLN8X1MZED4Wr2GL0keoeZFh7Qdj1G+d0wRpt7gX1qvwxiUmwOeSoP4JtKsn/ulU9TWXswbEdPz98T+4OhM3sG+cGmPW3oSNrfbluixxNuVGjWOAfbLzsXUUvbwn3+Ur6/QRPJDh4+zS6m3zy7aGdMDoaN15ejfmi19ZXbrB/FKMUzvOLntKu8MfRsLwdUZeyZjn1kNLmz06YwIN85Rxb92+oATf/5s9fy2KRDg3XiV+K41FYRQJ7sMW/95EOa7wSHG/AkQGGyuuD5PAYUXdysI1gCJSf38cRVLMDGql399CtD4plcPTkDkt05/8GEK/G/KBGlA5UHZmcGFK5g7XSIIADJJkUtMjsnZ7sAWTJBrtALotMgrgn+8IgSL+IJBQnAbX5AiBA34giFCMIcvyBICkEBNUBP8bwINP99LCBL4ggIhuIkv2CYE9/AFbeSe+Rk7v79k03+C3LBtZVdV0zbU/Gmdqfc+Xv5j/au20XQBoR60Qvro9/0LAwZf9wGaJzQAAAAASUVORK5CYII=',
+    'linkedin': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAABblBMVEVMaXFZWVlYWFhVVVVYWFhYWFhZWVlYWFhZWVlWVlYAAABmZmZZWVlZWVlZWVlYWFhZWVlYWFhYWFhYWFhZWVlISEg/Pz9ZWVlYWFhfX19ZWVlYWFhZWVlYWFhYWFhYWFhaWlpWVlZZWVlZWVlVVVVVVVVfX19YWFhVVVVYWFhZWVlYWFhZWVlZWVlYWFhYWFh/f39ZWVlYWFhbW1tXV1dYWFhaWlpYWFhZWVlYWFhZWVlYWFhZWVlZWVlaWlpYWFhYWFhYWFhVVVVZWVlYWFhXV1diYmJZWVlVVVVZWVlZWVlZWVlaWlpYWFhYWFhZWVlYWFhZWVlYWFhVVVVaWlpYWFhZWVlcXFxYWFhZWVlYWFhYWFhZWVlYWFhYWFhYWFhZWVlYWFhaWlpZWVlYWFhcXFxYWFhZWVlXV1dZWVlYWFhaWlpZWVlYWFhZWVlYWFhaWlpbW1tYWFhZWVlXV1dYWFhZWVlYWFhXV1dZWVku2URHAAAAeXRSTlMAmvQG7vFY75c1AQXZ+f79+MNrx/YHBMuwEF4a88lI8mMszmwMGwjMFfpqxm/WeaEC/LgZIG4ic35UotppSlWHymgJts9DDd8YxaYlEYHEkaq6LhJE94YhpLTsihRRmTfIf1Io5gtLvSZbk2bCmKMXTDjB8DqnsZUdtFrL+QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAdhJREFUaN7t2tdPAkEQBnCkqSgdVBAQ7CLYe++9995773r/vSGAzCA8YL59MOw8fjPZX0K44/YWlUqWLFg5271qBVRqu02TvH7VmAKtmla+vqZcAVdxAQNsCryGGVCPBxYY4MEDOgYoAkoCWQ7oBg9d1VfBsChguTaaFnWZhAAtRT95hQhAu0oaJQKAY9pYEQAEWKcXDpj5jbwEDhgNrDOD/4hqWecOD+hpo3IdD9jpZ9Qp4kLzJ/IOrQjAchKP28Ji7kWm+6pIWG3bEXa7Nh815oyq5Q/OfwDU2rrMAZOWlCUWlpGsObr2lvs08pA+Ehi4mcwIyKWNvFiYT7LCyFBDJUmafENgoCXp8V9lCNUhgc+m31sknwUHNKbchLlhwIcz9TZvCQV8pdlHbhpBQNp6Fw30iwbOjVBg7vFXZIUBhutLh6I4rPs83kABE9vx4QaW+1HAQ2J6nOZrIOCNTL/QxiwI6CHTzXuk4QIBZ3T8gr4TwgCl7HoK0S+XGQI8M2CejjsgwBMDdum4DgJ0M2ARD+gZcCAayJGABCQgAQlIIEsB+TJEAn8DyvDrv4o+arQyIIgHbvlxbw16fS8/JVCVgg+Ui6eSN+maCjvsyN0z3Vcg/8QgC1ff/RVqUE/ocDsAAAAASUVORK5CYII=',
+    'link': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAACcFBMVEVMaXFYWFhMTExVVVVZWVlVVVV/f39ZWVlVVVVZWVkAAABYWFhiYmJYWFhWVlZYWFhZWVk/Pz9YWFhYWFhZWVlZWVlZWVlbW1tZWVlYWFhZWVlZWVlYWFhaWlpZWVlYWFhYWFhYWFhZWVlYWFhYWFhYWFhZWVlYWFhaWlpfX19mZmZZWVlZWVlYWFhXV1dYWFhaWlpZWVlaWlpISEhYWFhYWFhZWVlZWVlYWFhZWVlbW1tYWFhYWFhYWFhbW1tYWFhZWVlYWFhZWVlYWFhVVVVZWVlYWFhXV1dZWVlYWFhYWFhaWlpdXV1YWFhcXFxYWFhVVVVcXFxZWVlWVlZYWFhaWlpYWFhZWVlZWVlZWVlZWVlZWVlaWlpYWFhYWFhXV1dVVVVXV1dYWFhaWlpZWVlYWFhZWVlZWVlZWVlYWFhXV1dZWVlZWVlbW1tYWFhZWVlYWFhVVVVZWVlZWVlaWlpZWVlYWFhZWVlYWFhZWVlYWFhYWFhVVVVYWFhYWFhYWFhZWVlaWlpZWVlYWFhaWlpYWFhZWVlYWFhZWVlYWFhXV1dZWVlaWlpZWVlfX19ZWVlZWVlZWVlYWFhaWlpcXFxZWVlZWVlYWFhaWlpZWVlYWFhYWFhXV1dZWVlVVVVXV1dYWFhYWFhYWFhYWFhZWVlZWVlZWVlYWFhYWFhYWFhYWFhWVlZZWVlYWFhaWlpZWVlaWlpZWVlZWVlYWFhZWVlYWFhYWFhZWVlYWFhZWVlbW1tYWFhcXFxZWVlYWFhZWVlYWFhYWFhZWVlZWVlYWFhVVVVZWVlYWFhYWFhXV1dYWFhZWVlZWVlZWVlZWVlZWVmH6k3iAAAAz3RSTlMA8QoJaQMC/gzCAe8N6y+s1ATuxPuoag66vvxbmE+AF61Zhi7V2uXAOxAFkfjyI2sf5zMHZZPFU4ixHFSH1xmwjNu3jR75bUN4NP0wE5UhVgYLlDWyZvrwjlDWri3JhFobIPQinXN+omSCXZK2J059lhimqxHzqtmvWJBxEvd2XGx3tOw+0nuz4rh0qVKPCPY84XlMJOTRzFUoyitXiQ9Ju5zpaJdeP5sa44EyckhjOUSl6J/tpIXTirkqURZhN8ieS3q9MRWjwcY6p/XQy4soUNhhAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFaElEQVRo3rVa90MTSRSeEBNCIAQwEE5KgCAIAgeiKCDFU7AACoogIti7nmc5u556p+fZe9frvffee51/6TazG8m8mZ3dyW7eT8mb733zZubtmzezi5AFWVX8X1tGnQNXf5TR1r5yFbJXVpTMwrTMmhm2jd3dfAfz5OYily38BROxnkwcsk6/9jEski9rLPJPT8ViqX7KCr3rCWws+Zlx89fvxmbk2aQ4+T3l2JykxNdD0iPYrJyIZ5Y8Kdi85CfU/4jkJdR/RRw1CfVfkdwE82P8uPX5ycresiLkDoXzsnmP9z6XRf8/KUx7iOhd+hILmG7N/+EKClSRzSBGrPAnF3oBzLshGYLuWuAfx0FegahRe/mR1w9gLSb4e18wzY9Q8GkAbDXk927k8T+qB58HkPcMO3hLwn9F+gZp6H0j/mcmyPivCFiFIgP+4JtS/iuyiQbfMOhgtqT/CC2h0WVi/q8GJP1HaDXI2WL0Lml+9IDGB4TghQHJ+VGkRmYEs6X9V8KOtrgurLHKYAfHtJbtP1e16Gy5ObTFP6IO5kL+aVpDOkkI65w8o+doE7+og2WA/3et1En3qf+/72ZtKqpomxmiDm7S2AVdND/Gy5sYm1Hg1C0BfxrIEtmqOuwbU5UeBjY714CoCAk6mA+ceY1oQ6djdePpdXCfADYZohkqBgWEugJ/0doXKZOZMCwKRR3M4+XFhQsARXFsiDJ78m029ofOXNJ+ltDYZUQ5jikQWwX8Dez+m6uoe9TfW2nwUW7oYrwxajuV4ccFOvv7FPJnGg1+h6eMBMr7qu2cDqap1K1TP7zMW7EviPIcu0FsU43z2Jbn9eqTHeTvKRr9oQpazA4hnTR8wDT069Y/58n/V8HepBVynUwOf53onX8DdWqtbn2lRuSfwGCKBrwK64CseqLvF1e+sfXbSaLpTubnUnSIfw44Risn0/zO2PPpxUqiW05bdKyOgveCDno4qaWIPhu49lOtbxNlPuZmO+Vx7uBlnMojMaryC/QAwP1ADlEOwak4FIWDUEreQ7Sfx5zDPTT/AcDUpl4bwGNR4Cq/+MHfEe2wLv9aBzBYo2bhdXAIgU4tLdfRevV65aAeP2Lvf+YSfRebXRarFmdp7RWi3KHHX8A+5MXcHTwi53gFzWexmZbhd7H3Y1XaZjuJHcJW0nCGF/Pz+fyomc0um6JtnzJt7bzNSM0tqCdyvGf40R1B/fYGXH68lOgn08rNGvzS+h/d7P0nw58T07oSNE5QM1gjrV0v2npLYAclVPMPdONv6kMLBtYs6gDe3zbSg3Q2xDZe/pVbVKaL7p/hneQ3AHC4dKzRF+YexAaSzFc/nEqm6WFW9WmeLgHR+4dohtpp7JEgC+keofkrG7BEhdsGLjx5mAskKrOiW9orMCwmiTrI4IU5I3ktF3O3a787If9pr6iDOgln1IzDpA/hDKEnafAcI/6psDjFA2IbUCIEpf3HHyOZEdRK81ddE5vU8Ysf0/wgsxhG0Xuy/Jc9Bh2AvLhXtL4c/oBh2IEnObVPyn98yjCsYcI/KuM/3uU27KAJmPiCEv7n9pq4VYT7gd9rmj/FY4KfPXr+xLviiJ8fhZk9eQMcg3uzBX6E/mVMs+lb7z2N2Ao/WsR5LXB87Iqg73gWj398mvl3e7w3n46zW37Zmdna9e3uQWzNf0W+ln95IuF/RLYlmB9dq5bjl5ofvXW20X/eec9e/yORVJRQ/yPvscy+Ryz3oPik3m+Kf78z7nfdmWbW4aAroV8DOA5Y/N6gRvw9Q3+tDV9k7NOlL33Xpm9KRrj0DQVuZJfcHW2B97eFt5G90nrv/vDJskGcev2Gf8atkBWq/wGmwCxnJZp1EQAAAABJRU5ErkJggg==',
+    'portfolio': 'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAACDVBMVEVMaXFZWVlYWFhZWVlYWFhbW1tZWVlZWVlVVVVWVlZYWFhcXFxYWFhZWVlYWFhaWlpZWVlYWFhYWFhMTExZWVlYWFhZWVlYWFhZWVlbW1t/f39YWFhaWlpYWFhZWVlYWFhZWVlXV1dcXFxZWVlXV1diYmJZWVlYWFhYWFhWVlZYWFhZWVlZWVlYWFgAAABZWVlYWFhZWVlYWFhYWFhZWVlaWlpZWVlZWVlZWVlYWFhfX19ZWVlYWFhYWFg/Pz9VVVVYWFhYWFhZWVlfX19ZWVlYWFhXV1dYWFhmZmZaWlpVVVVZWVlcXFxZWVlYWFhYWFhcXFxZWVlYWFhVVVVZWVlYWFhZWVlYWFhbW1tZWVlYWFhXV1dYWFhYWFhZWVlYWFhZWVlXV1dZWVlXV1dVVVVYWFhaWlpYWFhYWFhYWFhVVVVYWFhYWFhZWVlZWVlaWlpYWFhVVVVYWFhZWVlYWFhYWFhVVVVYWFhZWVlVVVVdXV1ZWVlZWVlZWVlZWVlYWFhYWFhZWVlaWlpZWVlYWFhYWFhZWVlXV1dZWVlXV1dZWVlYWFhZWVlYWFhZWVlYWFhZWVlYWFhZWVlZWVlYWFhYWFhbW1tZWVlYWFhZWVlZWVlYWFhZWVlYWFhYWFhYWFhZWVlaWlpYWFhaWlpYWFhZWVlYWFhZWVlZWVlYWFhYWFhYWFhZWVlYWFhZWVl0buXFAAAArnRSTlMA+S7+4zg2+AwvkAv3kpMwke70CuT9OTeuDgJLLcq06+pDJN9dDcViyTLy7RSEAeEa/K2q9mZqP1iHCKPvKwQewIKxEF7eV8QFYxLoIc5ChRbNxwbcMTz6GW/dJsHx9YGAKVtAFRdP2G7SD9VzfstV6QnPfZY0GHyMAxPz1HJTr3G/d9PsippG53RHfyjmj7Ko4PBQrLAcoGXC0KR7VlmbqxFIPrjIX47WaGuNZ5k9Mdc9AAAACXBIWXMAAAsTAAALEwEAmpwYAAADjklEQVRo3rVa9V8bMRRPe0BLi7Wl0AIthbLh7j5kMIZvuAy3ubu7u7v78jeug0IZ5ZK8pPn+eJ/vfb+53OXdy3tBiAkzSfMR9XvdJivGVtOQw2Yo+fQBBQrJPyrd2B/K93dv7eLqCWMLWB06Z2qWiLolNQ3TkO9M4pXfWleFmXAwZQuH/M7ODMyMoOI4oHxOYysGob0P9modGAqlMo99+IM6zIGH+xj1j27CfFAM21n003MxN7qT6fqNOiyAzBia/hmFcHuYIcRojI0iDcF8k6xfR/zatUuk0CACSVNG0h8j6Ydpl2mhpGewtqjrnyfOr8FHDCdGp3g1/RSFaBDiYwYTieYjKt9nEfkL0fuoejLTte7XOhCNmQ02UKi7LP76cdT1yzxFHhz2N7hBXURRPnIENWr4vWgtfQHrQpfJkRoquXV6zQSlsfxWvA6R0Qxk2/8GqUyRRhcerNfHRGiYyB2r9Rv2Q2MOnd+9+i+aDY85dH7KqvxhlCPmUPm5FSoPwBpzqPySlfyqintBEfmnly+38MYcGr/Ue9mheoMdaLCGX+hNggRiDpnfv5QqjQvEHAp/fvHqgkjMIfM/L+4vxGIOka8zei4XC8YcIn/WY1CJJeKPx8At02AOoWmZ+thqR1NSDTyL+adcg99sAZMfv1CBXAMb2ibXYCPaLNegByXKNUhEO+QamJFVrkE+6hfKiBimKEMkI6LjJXIJZEQMeIXmBDIiBrxBIwK/ezpG7aiQb5PEiNcIlcs0cHv2al8lTpH5XzYQIpAR0fQXN2oVGv6MiIzc3iWtLwIZEWn440bvYL+JZEQqVaNL9ycbVmb7o5CW0ry7r4tcSasQCdgFCQxFuifc8qZHTFXGJl79oAnGEngG5/irWQuxV/kMmpgrvdUKj74TUKq+wGOQDjC4xqHvAFXbm+EGx0AGSXCDDlhDoh5s0AYzGAZnEdDu0y2owQDQoKYdaBAL7Tr1AiepGNzXGoRuXaDIKQQZ6GbADgdgu6lD8OZfF2g7dYejv3jbBHHgaZKWngIYZPN0YIMBz3COq8ervQ7YAnOhrUeyAcobYTS4x9sJryln+0df4e/lx2eyGEwJnBaoddL1XSeEjjvMPqAZHBc8UGHpJOfwl7OQKGrvmglp+9lAHDo5uUe12HMxQOdaLGUF63U4i56jwEFf9t61phj6eBgFGBOT5ba0aJMmzDT04lnJU8itfwGRUUBmQPW0NAAAAABJRU5ErkJggg==',
+}
 # 透明 1x1 图片：盖在联系方式胶囊上承载超链接，整颗胶囊可点，文字不变色、不加下划线
 CLEAR = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+
+# ---------- 简洁单栏版式（layout: "simple"）常量 ----------
+S_X0, S_X1 = 51, W - 51
+S_CW, S_TOP, S_BOTTOM = S_X1 - S_X0, 40, H - 36
+LEVELS_S = [
+    dict(fs=10.5, ts=11.5, lh=18, g=1.3),
+    dict(fs=10, ts=11, lh=17, g=1.2),
+    dict(fs=10, ts=11, lh=16, g=1.1),
+    dict(fs=9.5, ts=10.5, lh=15.5, g=1.05),
+] + LEVELS
+S_BASE = 4   # LEVELS_S[S_BASE] 就是原始版式（level 0），更宽松的档位 level 为负数
+INFO_RE = re.compile(r'个人信息|基本信息|基本资料|个人资料|基本情况|personal', re.I)
+SPLIT_RE = re.compile(r'\n|\s+[·•｜|]\s+|[｜|]')
+
+
+def split_parts(t):
+    return [x.strip() for x in SPLIT_RE.split(str(t or '')) if x.strip()]
+
 
 MOVABLE = re.compile(r'教育|学历|证书|资格|荣誉|奖|语言|兴趣|爱好|社团|技能|education|certif|licen|award|honou?r|language|interest|affiliation|skill|activit', re.I)
 
@@ -261,13 +297,13 @@ class Builder:
             el.set('typeface', face)
 
     def add_text(self, x, y, w, h, paras, size, font, color=BLACK, bold=True, align='left', valign='top',
-                 lh=None, name=None, bullet=False):
+                 lh=None, name=None, bullet=False, wrap=True):
         """paras: 段落列表，每段是 run 字典列表（text/color/bold/font 可覆盖默认值）"""
         tb = self.S.shapes.add_textbox(E(x), E(y), E(w), E(h))
         if name:
             tb.name = str(name)
         tf = tb.text_frame
-        tf.word_wrap = True
+        tf.word_wrap = bool(wrap)
         tf.auto_size = MSO_AUTO_SIZE.NONE
         tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
         tf.vertical_anchor = MSO_ANCHOR.MIDDLE if valign == 'middle' else MSO_ANCHOR.TOP
@@ -298,7 +334,7 @@ class Builder:
         return tb
 
     def T(self, x, top, w, size, text, color=BLACK, font=None, bold=True, align='left', lh=None, lines=1,
-          runs=None, name=None, boxY=None, boxH=None, valign='top'):
+          runs=None, name=None, boxY=None, boxH=None, valign='top', wrap=True):
         """单个文本框：top 为文字顶边位置，自动换算成文本框位置"""
         if not self.S:
             return
@@ -307,7 +343,7 @@ class Builder:
         h = boxH if boxH is not None else l * lines
         rs = runs if runs is not None else [dict(text=str(text or ''))]
         self.add_text(x, y, w, h, [rs], size, font or self.BODY, color, bold, align, valign, l,
-                      name or strip(text)[:20])
+                      name or strip(text)[:20], wrap=wrap)
 
     def RR(self, x, y, w, h, color, r, tr=None, name=None, shape=MSO_SHAPE.ROUNDED_RECTANGLE):
         if not self.S:
@@ -403,12 +439,12 @@ class Builder:
             lat = not re.search(r'[^\x00-\x7F]', text)
             icon = ICONS.get(c.get('type'))
             tx = 18.1 if icon else 8
-            w = tx + self.textW(text, 8, lat, True) + 8.5
+            w = tx + self.textW(text, 8, lat, True) * 1.06 + 10   # 留余量，避免字体差异把文字挤成两行
             RR(px, 81.5, w, 17, WHITE, 8.5, tr=70, name='联系方式底框%d' % (i + 1))
             if S and icon:
                 self.pic(icon, px + 6.3, 81.5 + (17 - 8.5) / 2, 8.5, 8.5, name='图标%d' % (i + 1))
             T(px + tx, 0, w - tx, 8 if lat else 8.1, text, color=WHITE, font=LAT if lat else CJK,
-              boxY=81.5, boxH=17, valign='middle', name='联系方式%d' % (i + 1))
+              boxY=81.5, boxH=17, valign='middle', wrap=False, name='联系方式%d' % (i + 1))
             url = self.contact_link(c)
             if S and url:
                 self.pic(CLEAR, px, 81.5, w, 17, name='链接%d' % (i + 1), link=url)
@@ -490,10 +526,10 @@ class Builder:
             it = c0 + 28.3 * max(g, 0.9)
             lastTop = it
             # tags：标签式卡片，没有小标题和三个点
-            items = [dict(name='', tags=card['tags'])] if card.get('tags') else (card.get('items') or [])
+            items = [dict(name='', tags=card['tags'])] if card.get('tags') is not None else (card.get('items') or [])
             ops = []
             for item in items:
-                if item.get('tags'):
+                if item.get('tags') is not None:
                     lines = self.tagLines(item['tags'], 8, R_TXT_W)
                 else:
                     lines = [l for raw in str(item.get('content') or '').split('\n') for l in self.wrap(raw, 8, R_TXT_W, True, self.BB)]
@@ -523,6 +559,192 @@ class Builder:
         rightBottom = ry - 12
         return max(leftBottom, rightBottom)
 
+    # ---------- 简洁单栏版式 ----------
+    def simple_parts(self, merge):
+        """个人信息并入页眉，其余右栏卡片排在左栏板块后面；merge=True 时把卡片合成「其他信息」"""
+        D, EN = self.D, self.EN
+        own = isinstance(D.get('info'), list)
+        info = [str(x) for x in D['info'] if str(x).strip()] if own else []
+        secs = [dict(title=s.get('title'), kind='entries', entries=s.get('entries') or []) for s in D.get('left') or []]
+        for c in D.get('right') or []:
+            if not own and INFO_RE.search(str(c.get('title') or '')):
+                if c.get('tags') is not None:
+                    info += [str(x) for x in c['tags'] if str(x).strip()]
+                else:
+                    for it in c.get('items') or []:
+                        parts = split_parts(it.get('content'))
+                        if it.get('name') and not INFO_RE.search(str(it['name'])) and parts:
+                            parts[0] = str(it['name']) + (': ' if EN else '：') + parts[0]
+                        info += parts
+                continue
+            if c.get('tags') is not None:
+                secs.append(dict(title=c.get('title'), kind='tags', tags=c['tags'], card=True))
+            else:
+                secs.append(dict(title=c.get('title'), kind='rows', items=c.get('items') or [], card=True))
+        if merge:
+            cards = [x for x in secs if x.get('card')]
+            if len(cards) >= 2:
+                sep = '; ' if EN else '；'
+                items = []
+                for c in cards:
+                    if c['kind'] == 'tags':
+                        content = (', ' if EN else '、').join(str(x) for x in c['tags'] if str(x).strip())
+                    else:
+                        out = []
+                        for it in c['items']:
+                            if not (str(it.get('name') or '').strip() or str(it.get('content') or '').strip()):
+                                continue
+                            body = (', ' if EN else '，').join(split_parts(it.get('content')))
+                            head = str(it.get('name') or '') + (((' (' + str(it['date']) + ')') if EN else ('（' + str(it['date']) + '）')) if it.get('date') else '')
+                            out.append(head + (': ' if EN else '：') + body if head and body else head or body)
+                        content = sep.join(out)
+                    items.append(dict(name=c['title'], content=content))
+                secs = [x for x in secs if not x.get('card')] + [dict(title='Additional Information' if EN else '其他信息', kind='rows', items=items)]
+        return info, secs
+
+    def layout_simple(self, cfg, merge):
+        D, S, EN, BB = self.D, self.S, self.EN, self.BB
+        fs, ts, lh, g = cfg['fs'], cfg['ts'], cfg['lh'], cfg['g']
+        k = fs / 9                      # 条目内部间距随字号缩放
+        gi = min(max(g, 0.75), 1)       # 条目内部只收紧、不放大
+        auto = D.get('autoBold', True) is not False
+        LINE = tint(self.theme, 0.35)
+        T = self.T
+        def RR(x, y, w, h, color, r, name=None):
+            self.RR(x, y, w, h, color, r, name=name, shape=MSO_SHAPE.ROUNDED_RECTANGLE if r else MSO_SHAPE.RECTANGLE)
+        info, secs = self.simple_parts(merge)
+        has_photo, PH = bool(self.photo), 72
+        HW = S_CW - (PH + 12 if has_photo else 0)
+
+        # ===== 页眉 =====
+        y = S_TOP
+        T(S_X0, y, HW, 22, D.get('name'), font=LAT if EN else YH, name='姓名')
+        y += 22 * 1.25 + 6
+        if D.get('title'):
+            label = D.get('titleLabel')
+            if label is None:
+                label = '' if EN else '求职意向：'
+            T(S_X0, y, HW, 10.5, label + str(D['title']), color='333333', bold=BB, name='求职意向')
+            y += 10.5 * 1.25 + 7
+        contacts = [c for c in D.get('contacts') or [] if str(c.get('text') or '').strip()]
+        if contacts:
+            cx, row = S_X0, y
+            for i, c in enumerate(contacts):
+                text = str(c['text'])
+                lat = not re.search(r'[^\x00-\x7F]', text)
+                icon = ICONS_DARK.get(c.get('type'))
+                iw = 13 if icon else 0
+                tw = self.textW(text, 9, lat, BB) * 1.06 + 2
+                w = iw + tw
+                if cx > S_X0 and cx + w > S_X0 + HW:
+                    cx, row = S_X0, row + 16
+                if S and icon:
+                    self.pic(icon, cx, row + 0.6, 9, 9, name='图标%d' % (i + 1))
+                T(cx + iw, 0, tw, 9, text, color='333333', bold=BB, font=LAT if lat else CJK,
+                  boxY=row - 2, boxH=14, valign='middle', wrap=False, name='联系方式%d' % (i + 1))
+                url = self.contact_link(c)
+                if S and url:
+                    self.pic(CLEAR, cx, row - 2, w, 14, name='链接%d' % (i + 1), link=url)
+                cx += w + 16
+            y = row + 16
+        if info:
+            t = '  |  '.join(info)
+            n = self.nLines(t, 9, HW)
+            T(S_X0, y, HW, 9, t, color=GREY, bold=BB, lh=14, lines=n, name='个人信息')
+            y += n * 14 + 2
+        if S and has_photo:
+            p = self.pic(self.photo, S_X1 - PH, S_TOP - 4, PH, PH, name='照片')
+            try:
+                p.auto_shape_type = MSO_SHAPE.OVAL
+            except AttributeError:
+                p._element.spPr.find(qn('a:prstGeom')).set('prst', 'ellipse')
+        if has_photo:
+            y = max(y, S_TOP - 4 + PH + 4)
+        if D.get('summary'):
+            y += 6
+            n = self.nLines(D['summary'], fs, S_CW)
+            T(S_X0, y, S_CW, fs, D['summary'], runs=self.rich(D['summary'], GREY, auto), color=GREY, bold=BB, lh=lh, lines=n, name='个人简介')
+            y += n * lh
+        y += 10 * g
+
+        # ===== 板块 =====
+        gap = 6 * g
+        for sec in secs:
+            th = ts + 1
+            RR(S_X0, y - th * 0.05, 3, th * 1.1, self.theme, 1.2)
+            T(S_X0 + 8, y, S_CW - 8, th, sec.get('title'), name=sec.get('title'))
+            RR(S_X0, y + th * 1.25 + 2, S_CW, 0.75, LINE, 0, name='分隔线')
+            y += th * 1.25 + 2 + 7 * max(g, 0.8)
+            if sec['kind'] == 'entries':
+                ents = sec['entries']
+                for ei, e in enumerate(ents):
+                    bare = not e.get('name') and not e.get('date') and not e.get('sub') and not e.get('subRight')
+                    dw = self.textW(e['date'], fs, EN, True) + 4 if e.get('date') else 0
+                    nameW = S_CW - dw - 8
+                    nameN = self.nLines(e['name'], ts, nameW, EN, True) if e.get('name') else 1
+                    if bare:
+                        cur = y
+                    else:
+                        if e.get('name'):
+                            T(S_X0, y, nameW, ts, e['name'], name=str(e['name'])[:20], lh=ts * 1.25, lines=nameN)
+                        if e.get('date'):
+                            T(S_X1 - 140, y - 1.5 * k, 140, fs, e['date'], align='right', name='时间')
+                        if e.get('subRight'):
+                            T(S_X1 - 140, y + 9.3 * k, 140, fs, e['subRight'], align='right', name='右侧副信息')
+                        ny = y + (nameN - 1) * ts * 1.25
+                        if e.get('sub'):
+                            subW = S_CW - self.textW(e['subRight'], fs, EN, True) - 10 if e.get('subRight') else S_CW
+                            subN = self.nLines(e['sub'], fs, subW)
+                            sy = ny + 12.5 * k * gi
+                            T(S_X0, sy, subW, fs, e['sub'], color=GREY, bold=BB, lh=fs * 1.3, lines=subN, name='副标题')
+                            cur = sy + (subN - 1) * fs * 1.3 + 16.7 * k * gi
+                        else:
+                            cur = ny + 18.3 * k * gi
+                    for dl in e.get('details') or []:
+                        n = self.nLines(dl, fs, S_CW)
+                        mm = re.match(r'^([^：:]{1,12}[：:]\s?)([\s\S]*)$', str(dl))
+                        runs = ([dict(text=mm.group(1), color=BLACK, bold=True)] + self.rich(mm.group(2), GREY, auto)) if mm else self.rich(dl, GREY, auto)
+                        T(S_X0 - 1, cur, S_CW, fs, dl, runs=runs, color=GREY, bold=BB, lh=lh, lines=n, name='明细')
+                        cur += n * lh
+                    bullets = e.get('bullets') or []
+                    if bullets:
+                        BX, BW = S_X0 + 4.5, S_CW - 4.5
+                        total = sum(self.nLines(b, fs, BW - BUL_IND) for b in bullets)
+                        if S:
+                            self.add_text(BX, cur - fs * 0.12 - (lh - fs) / 2, BW, lh * total,
+                                          [self.rich(b, GREY, auto) for b in bullets], fs, self.BODY, GREY, BB,
+                                          lh=lh, name='列表_' + str(e.get('name') or '')[:16], bullet=True)
+                        cur += total * lh
+                    if e.get('text'):
+                        n = self.nLines(e['text'], fs, S_CW)
+                        T(S_X0 - 1, cur, S_CW, fs, e['text'], runs=self.rich(e['text'], GREY, auto), color=GREY, bold=BB, lh=lh, lines=n, name='描述')
+                        cur += n * lh
+                    y = cur + (7 * k * g if ei < len(ents) - 1 else 0)
+            elif sec['kind'] == 'rows':
+                items = [it for it in sec['items'] if str(it.get('name') or '').strip() or str(it.get('content') or '').strip()]
+                named = any(str(it.get('name') or '').strip() for it in items)
+                nameW = min(max(self.textW(it.get('name') or '', fs, EN, True) for it in items) + 16, S_CW * 0.34) if named else 0
+                dW = max([0] + [self.textW(it['date'], fs, EN, True) + 12 for it in items if it.get('date')])
+                cX, cW = S_X0 + nameW, S_CW - nameW - dW
+                for i, it in enumerate(items):
+                    content = ('; ' if EN else '；').join(split_parts(it.get('content')))
+                    nN = self.nLines(it['name'], fs, nameW - 8, EN, True) if named and it.get('name') else 1
+                    cN = self.nLines(content, fs, cW) if content else 1
+                    if named and it.get('name'):
+                        T(S_X0, y, nameW - 8, fs, it['name'], lh=lh, lines=nN, name=str(it['name'])[:20])
+                    if content:
+                        T(cX, y, cW, fs, content, runs=self.rich(content, GREY, auto), color=GREY, bold=BB, lh=lh, lines=cN, name='内容')
+                    if it.get('date'):
+                        T(S_X1 - 120, y, 120, fs, it['date'], align='right', lh=lh, name='时间')
+                    y += max(nN, cN) * lh + (2 * g if i < len(items) - 1 else 0)
+            else:
+                t = (', ' if EN else '、').join(str(x) for x in sec.get('tags') or [] if str(x).strip())
+                n = self.nLines(t, fs, S_CW)
+                T(S_X0 - 1, y, S_CW, fs, t, runs=self.rich(t, GREY, auto), color=GREY, bold=BB, lh=lh, lines=n, name='标签')
+                y += n * lh
+            y += gap + 4 * g
+        return y - gap - 4 * g + lh * 0.25
+
     # ---------- 选档 + 左右栏平衡 + 输出 ----------
     def fit(self):
         for i, c in enumerate(LEVELS):
@@ -541,8 +763,27 @@ class Builder:
                               content='\n'.join(p for p in parts if p)))
         return dict(title=sec.get('title'), items=items)
 
+    def fit_simple(self, merge):
+        for i, c in enumerate(LEVELS_S):
+            if self.layout_simple(c, merge) <= S_BOTTOM:
+                return i, 0.0
+        return len(LEVELS_S) - 1, self.layout_simple(LEVELS_S[-1], merge) - S_BOTTOM
+
     def build(self, out):
         self.load_photo()
+        simple = self.D.get('layout') == 'simple'
+        merge = False
+        if simple:
+            lv, overflow = self.fit_simple(False)
+            # 比原始版式还挤时，试试把右栏卡片合并成「其他信息」，能放得更宽松就采用
+            if lv > S_BASE and self.D.get('balance', True) is not False:
+                lv2, ov2 = self.fit_simple(True)
+                if lv2 < lv or (lv2 == lv and ov2 < overflow - 1):
+                    lv, overflow, merge = lv2, ov2, True
+            cfg = LEVELS_S[lv]
+            level = lv - S_BASE
+            moved = [x['title'] for x in self.simple_parts(False)[1] if x.get('card')] if merge else []
+            return self._emit(out, cfg, level, overflow, moved, [], S_BOTTOM, lambda: self.layout_simple(cfg, merge))
         level, overflow = self.fit()
         # 左右栏平衡：原始版式放不下时，把左栏的短板块（教育、证书、荣誉、语言等）挪成右栏卡片
         moved = []
@@ -566,16 +807,18 @@ class Builder:
         warns = []
         if self.D.get('summary') and self.nLines(self.D['summary'], 8.1, 521) > 3:
             warns.append('个人简介超过 3 行，顶栏会被撑高，建议压缩到 2～3 句')
+        return self._emit(out, cfg, level, overflow, moved, warns, BOTTOM, lambda: self.layout(cfg))
 
+    def _emit(self, out, cfg, level, overflow, moved, warns, page_bottom, draw):
         prs = Presentation()
         prs.slide_width, prs.slide_height = E(W), E(H)
         self.S = prs.slides.add_slide(prs.slide_layouts[6])
-        bottom = self.layout(cfg)
+        bottom = draw()
         prs.core_properties.title = str(self.D.get('name') or '') + ' 个人简历'
         prs.save(out)
         self.S = None
         res = dict(out=out, level=level, fontSize=cfg['fs'], lineHeight=cfg['lh'], bottom=jsround(bottom),
-                   pageBottom=BOTTOM, overflowPt=jsround(overflow), lang='en' if self.EN else 'zh', movedToRight=moved)
+                   pageBottom=page_bottom, overflowPt=jsround(overflow), lang='en' if self.EN else 'zh', movedToRight=moved)
         print(json.dumps(res, ensure_ascii=False))
         for w in warns:
             print('提示：' + w)

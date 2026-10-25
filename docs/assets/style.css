@@ -80,7 +80,7 @@ img { max-width: 100%; display: block; }
 .section .lead { color: var(--muted); margin: 0 0 32px; max-width: 40em; }
 .band { background: var(--paper); border-block: 1px solid var(--line); }
 
-.examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+.examples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
 .example figure { margin: 0; }
 .example .sheet { width: 100%; height: auto; aspect-ratio: 595.25 / 841.85; }
 .example figcaption { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
@@ -192,6 +192,7 @@ dialog::backdrop { background: rgba(23, 32, 51, .35); }
   .hero { grid-template-columns: 1fr; gap: 40px; padding-top: 16px; }
   .hero-page { max-width: 440px; }
   .ways { grid-template-columns: 1fr; }
+  .examples { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .app { grid-template-columns: 1fr; }
   .form-pane { border-right: 0; }
   .app[data-tab="form"] .preview-pane, .app[data-tab="preview"] .form-pane { display: none; }
