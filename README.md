@@ -15,7 +15,7 @@
 | 中文 · 前端校招 | [zh_campus.json](examples/zh_campus.json) | [zh_campus.pptx](examples/zh_campus.pptx) | [zh_campus.pdf](examples/zh_campus.pdf) |
 | 英文 · 市场营销 | [en_marketing.json](examples/en_marketing.json) | [en_marketing.pptx](examples/en_marketing.pptx) | [en_marketing.pdf](examples/en_marketing.pdf) |
 
-> 示例的 PDF 和预览图是在 Linux 上用 LibreOffice 导出的，中文字体用思源黑体（Noto Sans CJK）代替黑体。在 Windows 版 PowerPoint 里打开 .pptx，会显示为黑体和微软雅黑。示例人物都是虚构的。
+> 示例的 PDF 和预览图是在 Linux 上用 LibreOffice 导出的，中文字体用思源黑体（Noto Sans CJK）代替黑体。在 Windows 版 PowerPoint 里打开 .pptx，会显示为黑体和微软雅黑。示例人物都是虚构的；中文示例的头像 [avatar.png](examples/avatar.png) 是用代码画的原创卡通形象（源文件 [avatar.svg](examples/avatar.svg)），随仓库一起按 MIT 许可证使用，可以直接拿去当占位图。
 
 ## 特点
 
