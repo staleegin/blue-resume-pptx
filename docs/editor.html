@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>简历生成器 · blue-resume-pptx</title>
+<meta name="description" content="在浏览器里填写简历，实时预览，下载单页 A4、可编辑的 PowerPoint 简历。数据不上传。">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"></span>blue-resume-pptx</a>
+  <nav class="nav-links" aria-label="主导航">
+    <a href="./">介绍</a>
+    <a href="editor.html" aria-current="page">生成器</a>
+    <a href="https://github.com/staleegin/blue-resume-pptx">GitHub</a>
+  </nav>
+</header>
+
+<div class="app-bar">
+  <div class="seg mobile-tabs" role="group" aria-label="切换视图">
+    <button type="button" data-tab="form" aria-pressed="true">填写</button>
+    <button type="button" data-tab="preview" aria-pressed="false">预览</button>
+  </div>
+  <button class="btn btn-small" type="button" id="btn-import">导入数据</button>
+  <button class="btn btn-small" type="button" id="btn-export">导出数据</button>
+  <button class="btn btn-small btn-quiet" type="button" id="btn-clear">清空</button>
+  <span class="spacer"></span>
+  <button class="btn btn-primary" type="button" id="btn-download">下载 PPT</button>
+</div>
+
+<main class="app" data-tab="form">
+  <form class="form-pane" id="form" autocomplete="off" novalidate></form>
+  <section class="preview-pane" aria-label="预览">
+    <div class="preview-sticky">
+      <p class="status" id="status" role="status">正在加载…</p>
+      <div class="page-wrap"><div class="page-scale sheet" id="preview"></div></div>
+    </div>
+  </section>
+</main>
+
+<dialog id="dlg-import" aria-labelledby="dlg-import-title">
+  <form class="dlg" method="dialog">
+    <h2 id="dlg-import-title">导入数据</h2>
+    <p class="hint">粘贴 data.json 的内容，或者选一个 .json 文件。可以先复制提示语给 ChatGPT、豆包等 AI，让它把你的材料整理成这个格式。</p>
+    <textarea id="import-text" spellcheck="false" aria-label="JSON 内容" placeholder='{"name": "…", "left": […], "right": […]}'></textarea>
+    <p class="error" id="import-error" role="alert"></p>
+    <div class="dlg-actions">
+      <button class="btn btn-small" type="button" id="btn-copy-prompt">复制给 AI 的提示语</button>
+      <label class="btn btn-small">选择文件<input type="file" id="import-file" accept=".json,application/json" hidden></label>
+      <button class="btn btn-small" type="button" data-example="zh_campus">载入中文示例</button>
+      <button class="btn btn-small" type="button" data-example="en_marketing">载入英文示例</button>
+      <span class="spacer"></span>
+      <button class="btn btn-small btn-quiet" value="cancel">取消</button>
+      <button class="btn btn-small btn-primary" type="button" id="btn-do-import">导入</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-export" aria-labelledby="dlg-export-title">
+  <form class="dlg" method="dialog">
+    <h2 id="dlg-export-title">导出数据</h2>
+    <p class="hint">保存这份数据，下次点「导入数据」就能接着改；也可以交给 Python / JS 脚本生成。头像不包含在里面，需要单独保存。</p>
+    <textarea id="export-text" spellcheck="false" readonly aria-label="JSON 内容"></textarea>
+    <div class="dlg-actions">
+      <button class="btn btn-small" type="button" id="btn-copy-json">复制</button>
+      <button class="btn btn-small" type="button" id="btn-save-json">下载 data.json</button>
+      <span class="spacer"></span>
+      <button class="btn btn-small btn-primary" value="close">完成</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="vendor/pptxgen.bundle.js"></script>
+<script src="lib/resume_core.js"></script>
+<script src="assets/preview.js"></script>
+<script src="assets/editor.js"></script>
+</body>
+</html>

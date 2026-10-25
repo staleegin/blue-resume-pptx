@@ -2,6 +2,8 @@
 
 把简历内容（一份 JSON）生成**单页 A4、可编辑的 PowerPoint 简历**。版式是蓝色顶栏，左栏放经历，右栏放技能卡片。仓库里同时附带一个 Claude 技能：把零散素材交给 Claude，它会先问清缺的信息，再写成 JSON，最后直接出 .pptx。
 
+**在线使用：<https://staleegin.github.io/blue-resume-pptx/>**：打开网页填写，右边实时预览，点一下就能下载 PPT。全部在浏览器里生成，数据不上传。
+
 为什么用 PPT 做简历：Word 里图片乱跑、表格错位，PPT 可以自由排版，导出 PDF 后和 Word 做的没有区别。
 
 | 中文示例 | 英文示例 |
@@ -164,6 +166,10 @@ soffice --headless --convert-to pdf 输出文件名.pptx
 4. 生成 .pptx 并检查渲染效果。
 
 技能要求 AI 不编造经历和数字。凡是涉及事实的改写，都会先问你。
+
+## 网站（docs/）
+
+`docs/` 是 GitHub Pages 网站：首页 `index.html` 和生成器 `editor.html`。生成器直接加载与命令行相同的排版核心 `resume_core.js`，所以网页下载的 PPT 和命令行生成的逐元素一致。改了排版核心、Python 脚本或示例后，运行 `npm run sync-docs` 同步到网站，`npm test` 会检查是否同步。
 
 ## 隐私提示
 

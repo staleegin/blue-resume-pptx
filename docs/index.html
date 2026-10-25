@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>blue-resume-pptx · 一页 PPT 简历</title>
+<meta name="description" content="填好内容，下载一份单页 A4、每个字都能改的 PowerPoint 简历。排版自动完成，全部在浏览器里生成，数据不上传。">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"></span>blue-resume-pptx</a>
+  <nav class="nav-links" aria-label="主导航">
+    <a href="./" aria-current="page">介绍</a>
+    <a href="editor.html">生成器</a>
+    <a href="https://github.com/staleegin/blue-resume-pptx">GitHub</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <h1>把简历排成一页 PPT</h1>
+      <p>填好内容，下载一份单页 A4、每个字都能改的 PowerPoint 简历。放不下会自动收紧，数字自动加粗。全部在浏览器里生成，你的信息不会上传到任何地方。</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="editor.html">开始填写</a>
+        <a class="btn" href="#examples">先看看示例</a>
+      </div>
+    </div>
+    <div class="hero-page">
+      <img class="sheet" src="examples/preview_zh_campus.png" alt="一份生成好的中文简历：蓝色顶栏里是姓名、求职意向、联系方式和头像，左栏是教育、实习和项目经历，右栏是技能、证书和荣誉卡片" width="654" height="925">
+    </div>
+  </section>
+
+  <section class="band" id="examples">
+    <div class="section">
+      <h2>示例</h2>
+      <p class="lead">两份虚构的简历。PPT 可以直接打开修改，PDF 是导出后的样子，数据文件可以导入生成器接着改。</p>
+      <div class="examples">
+        <div class="example">
+          <figure>
+            <img class="sheet" src="examples/preview_zh_campus.png" alt="中文示例简历：前端开发校招" loading="lazy" width="654" height="925">
+            <figcaption>
+              <strong>中文 · 前端开发校招</strong>
+              <a href="examples/zh_campus.pptx" download>PPT</a>
+              <a href="examples/zh_campus.pdf">PDF</a>
+              <a href="examples/zh_campus.json" download>数据</a>
+            </figcaption>
+          </figure>
+        </div>
+        <div class="example">
+          <figure>
+            <img class="sheet" src="examples/preview_en_marketing.png" alt="英文示例简历：市场营销" loading="lazy" width="654" height="925">
+            <figcaption>
+              <strong>英文 · 市场营销</strong>
+              <a href="examples/en_marketing.pptx" download>PPT</a>
+              <a href="examples/en_marketing.pdf">PDF</a>
+              <a href="examples/en_marketing.json" download>数据</a>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how">
+    <h2>三种用法</h2>
+    <p class="lead">排版规则只有一套，三种方式做出来的简历一模一样。</p>
+    <div class="ways">
+      <article class="way">
+        <h3>在这里填写</h3>
+        <p class="who">不想用 AI，或者内容已经想好了</p>
+        <ol>
+          <li>打开生成器，按栏目填写，右边实时预览。</li>
+          <li>上传头像，选一个主色。</li>
+          <li>点「下载 PPT」，用 PowerPoint 或 WPS 打开，另存为 PDF 投递。</li>
+        </ol>
+        <div class="actions"><a class="btn btn-primary btn-small" href="editor.html">打开生成器</a></div>
+      </article>
+      <article class="way">
+        <h3>让 AI 帮你写</h3>
+        <p class="who">ChatGPT、豆包等能运行代码的 AI，已实测可用</p>
+        <ol>
+          <li>下载脚本 <a href="resume_pptx.py" download>resume_pptx.py</a>，和旧简历一起上传给 AI。</li>
+          <li>粘贴下面这段话，回答它提的问题。</li>
+          <li>它会运行脚本，直接给你 .pptx 下载。</li>
+        </ol>
+        <pre class="prompt" id="prompt-ai">我上传了 resume_pptx.py（简历 PPT 生成脚本）和我的简历材料。请：
+1. 先阅读 resume_pptx.py 开头的「给 AI 的使用说明」和 data.json 格式；
+2. 按说明整理我的信息，缺的先问我，不要编造任何经历和数字；
+3. 写好 data.json 后，在代码环境里运行：python resume_pptx.py data.json 简历.pptx
+4. 把生成的 .pptx 给我下载，并告诉我脚本输出的 level 和 overflowPt。
+注意：必须运行这个脚本生成，不要自己用 python-pptx 另画版式。</pre>
+        <div class="actions">
+          <button class="btn btn-small" type="button" data-copy="prompt-ai">复制这段话</button>
+          <a class="btn btn-small" href="resume_pptx.py" download="resume_pptx.py">下载脚本</a>
+        </div>
+      </article>
+      <article class="way">
+        <h3>作为 Claude 技能</h3>
+        <p class="who">用 Claude 的话，体验最完整</p>
+        <ol>
+          <li>把仓库里的 <code>skill/blue-resume-pptx</code> 文件夹加到 Claude 的技能里。</li>
+          <li>对 Claude 说「帮我做一份简历 PPT」，附上材料或目标岗位 JD。</li>
+          <li>它会先问清缺的信息、做岗位匹配分析，再生成并检查效果。</li>
+        </ol>
+        <div class="actions"><a class="btn btn-small" href="https://github.com/staleegin/blue-resume-pptx/tree/main/skill/blue-resume-pptx">查看技能文件</a></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="section">
+      <h2>排版替你操心的事</h2>
+      <p class="lead">你只管写内容，这些都由程序处理。</p>
+      <ul class="facts">
+        <li><strong>保证一页</strong><span>放不下时先把教育、证书这类短板块挪到右栏，再收紧行距，最后把字号降到 8 号。还放不下会告诉你超了几行。</span></li>
+        <li><strong>数字自动加粗</strong><span>「90 人」「56%」「$2.5M」这类成果会加黑加粗；年份、月份、型号不加粗。重点短语用 **两个星号** 包起来。</span></li>
+        <li><strong>每个字都能改</strong><span>每个板块都是真正的文本框，要点带项目符号，日期右对齐，邮箱和网址可以点击。</span></li>
+        <li><strong>中英文都行</strong><span>中文用黑体，英文自动换成 Arial 并按单词换行。主色可以换，卡片底色跟着变浅。</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>在 ChatGPT 和豆包里的实测</h2>
+    <p class="lead">2026 年 10 月实测：两边都真的运行了脚本，并给出了 PPT 下载。</p>
+    <div class="shots">
+      <figure><img src="img/chatgpt.png" alt="ChatGPT 网页版运行 resume_pptx.py 并给出 简历.pptx 下载的截图" loading="lazy"><figcaption>ChatGPT 网页版（免费版），用 Python 脚本</figcaption></figure>
+      <figure><img src="img/doubao.png" alt="豆包学习技能后生成简历 PPT 并转成 PDF 的截图" loading="lazy"><figcaption>豆包，用仓库里的技能</figcaption></figure>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>代码在 <a href="https://github.com/staleegin/blue-resume-pptx">GitHub</a> 开源（MIT 许可证）。联系方式图标来自 Font Awesome Free（CC BY 4.0）。示例人物均为虚构。</p>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+document.querySelectorAll('[data-copy]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var text = document.getElementById(b.getAttribute('data-copy')).textContent;
+    var done = function () { var t = document.getElementById('toast'); t.textContent = '已复制，粘贴到 AI 对话框即可'; t.classList.add('show'); setTimeout(function () { t.classList.remove('show'); }, 2400); };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done);
+    else { var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } finally { ta.remove(); } }
+  });
+});
+</script>
+</body>
+</html>

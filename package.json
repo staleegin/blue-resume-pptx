@@ -7,8 +7,9 @@
   "scripts": {
     "build": "node skill/blue-resume-pptx/scripts/build_resume.js",
     "example": "node skill/blue-resume-pptx/scripts/build_resume.js examples/zh_campus.json examples/zh_campus.pptx",
-    "test": "node tests/bold.test.js",
-    "test:parity": "python3 tests/parity.py examples/zh_campus.json examples/en_marketing.json"
+    "test": "node tests/bold.test.js && node tests/docs_sync.test.js",
+    "test:parity": "python3 tests/parity.py examples/zh_campus.json examples/en_marketing.json",
+    "sync-docs": "sh tools/sync_docs.sh"
   },
   "dependencies": {
     "jszip": "^3.10.1",
