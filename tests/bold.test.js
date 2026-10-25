@@ -1,6 +1,6 @@
 // 自动加粗规则单测：node tests/bold.test.js
 const path = require('path');
-const src = require('fs').readFileSync(path.join(__dirname, '../skill/blue-resume-pptx/scripts/build_resume.js'), 'utf8');
+const src = require('fs').readFileSync(path.join(__dirname, '../skill/blue-resume-pptx/scripts/resume_core.js'), 'utf8');
 const re = eval(src.match(/const NUM_RE = (\/.*\/g);/)[1]);
 const skip = k => /^[\d.,]+$/.test(k) || /^\d{4}\s*年$/.test(k) || /^\d{1,2}\s*月$/.test(k);
 const bolded = t => { const out = []; t.replace(re, m => { const k = m.trim(); if (!skip(k)) out.push(k); return m; }); return out.join(' | '); };
